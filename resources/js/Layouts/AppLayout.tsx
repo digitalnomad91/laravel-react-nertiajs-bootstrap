@@ -72,7 +72,19 @@ export default function AppLayout({
                   >
                     Dashboard
                   </NavLink>
+
+                  <NavLink
+                    href={route('admin')}
+                    active={route().current('admin')}
+                  >
+                    Admin
+                  </NavLink>
+
                 </div>
+
+
+
+
               </div>
 
               <div className="hidden sm:flex sm:items-center sm:ml-6">
@@ -285,7 +297,7 @@ export default function AppLayout({
                 href={route('dashboard')}
                 active={route().current('dashboard')}
               >
-                Dashboard
+                Dashboard3
               </ResponsiveNavLink>
             </div>
 
