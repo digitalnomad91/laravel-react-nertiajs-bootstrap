@@ -73,13 +73,6 @@ export default function AppLayout({
                     Dashboard
                   </NavLink>
 
-                  <NavLink
-                    href={route('admin')}
-                    active={route().current('admin')}
-                  >
-                    Admin
-                  </NavLink>
-
                 </div>
 
 
