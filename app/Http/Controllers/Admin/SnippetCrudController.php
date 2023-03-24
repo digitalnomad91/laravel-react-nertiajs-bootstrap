@@ -34,7 +34,6 @@ class SnippetCrudController extends CrudController
         $this->crud->operation('list', function () {
             $this->crud->addColumn('title');
 
-            $this->crud->addColumn('status');
             $this->crud->addColumn([
                 'name' => 'paid_item',
                 'label' => 'Paid Item',

@@ -1,92 +1,208 @@
-import Welcome from '@/Components/Welcome';
-import AppLayout from '@/Layouts/AppLayout';
-import { React, useCallback, useEffect, useMemo, useState } from 'react'
-import hljs from 'highlight.js';
+import AppLayout from "@/Layouts/AppLayout";
+import { React, useCallback, useEffect, useMemo, useState } from "react";
+import { router } from "@inertiajs/react";
+
+import { Link, useForm, Head } from "@inertiajs/react";
+import useRoute from "@/Hooks/useRoute";
 
 export default function Payment() {
+  const route = useRoute();
+  const form = useForm({
+    email: "",
+    password: "",
+    remember: "",
+  });
 
-  const [todos, setTodos]  = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    form.post(route("login"), {
+      onFinish: () => form.reset("password"),
+    });
+  }
 
-  const colors = ['green', 'indigo', 'red']
-
-  const fetchTodos = async () => {
-    try {
-      const response = await fetch('/snippets');
-      const data = await response.json();
-      setTodos(data);
-      console.log(data);
-
-      setTimeout(function() {
-        document.querySelectorAll('code').forEach(el => {
-          console.log(el)
-          // then highlight each
-          hljs.highlightElement(el);
-        });
-
-      }, 100)
-
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  
   useEffect(() => {
-    fetchTodos();
-    
-  }, [])
+    var $form = $(".require-validation");
+
+    $("form.require-validation").bind("submit", function (e) {
+      var $form = $(".require-validation"),
+        inputSelector = [
+          "input[type=email]",
+          "input[type=password]",
+
+          "input[type=text]",
+          "input[type=file]",
+
+          "textarea",
+        ].join(", "),
+        $inputs = $form.find(".required").find(inputSelector),
+        $errorMessage = $form.find("div.error"),
+        valid = true;
+
+      $errorMessage.addClass("hide");
+
+      $(".has-error").removeClass("has-error");
+
+      $inputs.each(function (i, el) {
+        var $input = $(el);
+
+        if ($input.val() === "") {
+          $input.parent().addClass("has-error");
+
+          $errorMessage.removeClass("hide");
+
+          e.preventDefault();
+        }
+      });
+
+      if (!$form.data("cc-on-file")) {
+        e.preventDefault();
+
+        Stripe.setPublishableKey(
+          $form.data("pk_test_TYooMQauvdEDq54NiTphI7jx")
+        );
+
+        Stripe.createToken(
+          {
+            number: $(".card-number").val(),
+
+            cvc: $(".card-cvc").val(),
+
+            exp_month: $(".card-expiry-month").val(),
+
+            exp_year: $(".card-expiry-year").val(),
+          },
+          stripeResponseHandler
+        );
+      }
+    });
+
+    function stripeResponseHandler(status, response) {
+      if (response.error) {
+        $(".error")
+          .removeClass("hide")
+
+          .find(".alert")
+
+          .text(response.error.message);
+      } else {
+        /* token contains id, last4, and card type */
+
+        var token = response["id"];
+
+        $form.find("input[type=text]").empty();
+
+        $form.append(
+          "<input type='hidden' name='stripeToken' value='" + token + "'/>"
+        );
+
+        $form.get(0).submit();
+      }
+    }
+  }, []);
 
   return (
     <AppLayout
-      title="Dashboard"
+      title="Stripe Payment"
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-          Dashboard
+          Payment
         </h2>
       )}
     >
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-          <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
 
-            
-          {todos?.map((todoItem) => {
-        return (
-          <div key={todoItem.id} className="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
-                <div className="py-8 flex flex-wrap md:flex-nowrap">
-                  <div className="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-                    <span className="font-semibold title-font text-white">{todoItem.category.name}</span>
-                    <span className="mt-1 text-gray-500 text-sm">12 Jun 2019</span>
+
+
+          <div className="">
+
+
+          <form
+              role="form"
+              action="{{ route('stripe.post') }}"
+              method="post"
+              className="require-validation"
+              data-cc-on-file="false"
+              data-stripe-publishable-key="{{ env('STRIPE_KEY') }}"
+              id="payment-form"
+            >  
+            <div className="flex justify-center">
+              <div className="h-auto w-80 bg-white p-3 rounded-lg">
+                <p className="text-xl font-semibold">Payment Details</p>
+                <div className="input_text mt-6 relative">
+                  {" "}
+                  <input
+                    type="text"
+                    className="h-12 pl-7 outline-none px-2 focus:border-blue-900 transition-all w-full border-b "
+                    placeholder="John Row"
+                  />{" "}
+                  <span className="absolute left-0 text-sm -top-4">
+                    Cardholder Name
+                  </span>{" "}
+                  <i className="absolute left-2 top-4 text-gray-400 fa fa-user"></i>{" "}
+                </div>
+                <div className="input_text mt-8 relative">
+                  {" "}
+                  <input
+                    type="text"
+                    className="card-number h-12 pl-7 outline-none px-2 focus:border-blue-900 transition-all w-full border-b "
+                    placeholder="0000 0000 0000 0000"
+                    data-slots="0"
+                    data-accept="\d"
+                  />{" "}
+                  <span className="absolute left-0 text-sm -top-4">
+                    Card Number
+                  </span>{" "}
+                  <i className="absolute left-2 top-[14px] text-gray-400 text-sm fa fa-credit-card"></i>{" "}
+                </div>
+                <div className="mt-8 flex gap-5 ">
+                  <div className="input_text relative w-full">
+                    {" "}
+                    <input
+                      type="text"
+                      className="card-expiry-month h-12 pl-7 outline-none px-2 focus:border-blue-900 transition-all w-24 border-b "
+                      placeholder="mm"
+                      data-slots="my"
+                    />{" "}
+                    {" "}
+                    <input
+                      type="text"
+                      className="card-expiry-year h-12 pl-7 outline-none px-2 focus:border-blue-900 transition-all w-24 border-b "
+                      placeholder="yyyy"
+                      data-slots="my"
+                    />{" "}
+
+                    <span className="absolute left-0 text-sm -top-4">
+                      Expiration Date
+                    </span>{" "}
+                    <i className="absolute left-2 top-4 text-gray-400 fa fa-calendar-o"></i>{" "}
                   </div>
-                  <div className="md:flex-grow">
-                    <h2 className="text-2xl font-medium text-white title-font mb-2">{todoItem.title}</h2>
-                    <pre className="bg-gray-100 p-4 rounded-md">
-                      <code className="text-sm font-mono code">
-                        {todoItem.content}
-                      </code>
-                    </pre>
-
-                    {todoItem.tags?.map((tag, index) => {
-                      
-                        var color = colors[(Math.random()*colors.length)|0] 
-                      
-                      return (<span key={index} className={"mt-2 ml-2 inline-flex items-center rounded-md border-2 border-"+color+"-200 bg-"+color+"-200 px-2 py-1 text-sm font-semibold text-"+color+"-600 shadow-sm "}>
-                {tag.name}
-              </span>)
-                })}
-
-
-
+                  <div className="input_text relative w-full">
+                    {" "}
+                    <input
+                      type="text"
+                      className="card-cvc h-12 pl-7 outline-none px-2 focus:border-blue-900 transition-all w-full border-b "
+                      placeholder="000"
+                      data-slots="0"
+                      data-accept="\d"
+                    />{" "}
+                    <span className="absolute left-0 text-sm -top-4">CVV</span>{" "}
+                    <i className="absolute left-2 top-4 text-gray-400 fa fa-lock"></i>{" "}
                   </div>
                 </div>
+                <p className="text-lg text-center mt-4 text-gray-600 font-semibold">
+                  Payment amount:$12.98
+                </p>
+                <div className="flex justify-center mt-4">
+                  {" "}
+                  <button className="outline-none pay h-12 bg-orange-600 text-white mb-3 hover:bg-orange-700 rounded-lg w-1/2 cursor-pointer transition-all">
+                    Pay
+                  </button>{" "}
+                </div>
+              </div>
             </div>
-        );
-      })}
-
-
+            </form>
 
           </div>
         </div>

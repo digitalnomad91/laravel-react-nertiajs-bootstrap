@@ -6,6 +6,7 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <!-- Scripts -->
     @routes
@@ -17,7 +18,8 @@
     @inertia
   </body>
 
-      
+
+  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
   <link rel="stylesheet"
   href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
 </html>
