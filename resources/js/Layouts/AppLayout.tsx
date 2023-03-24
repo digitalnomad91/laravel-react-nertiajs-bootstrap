@@ -11,6 +11,8 @@ import DropdownLink from '@/Components/DropdownLink';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Team } from '@/types';
+import { usePage } from '@inertiajs/react'
+
 
 interface Props {
   title: string;
@@ -26,6 +28,9 @@ export default function AppLayout({
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] =
     useState(false);
+  
+    const { url, component } = usePage()
+
 
   function switchToTeam(e: React.FormEvent, team: Team) {
     e.preventDefault();
@@ -72,6 +77,9 @@ export default function AppLayout({
                   >
                     Dashboard
                   </NavLink>
+
+                  <NavLink href="/admin" className={url === '/admin' ? 'active' : ''}>Administrator</NavLink>
+
 
                 </div>
 
