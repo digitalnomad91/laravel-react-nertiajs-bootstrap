@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { React, useCallback, useEffect, useMemo, useState } from 'react'
 import hljs from 'highlight.js';
 
-export default function Dashboard() {
+export default function Payment() {
 
   const [todos, setTodos]  = useState([]);
   const [loading, setLoading] = useState(true);

@@ -11,3 +11,12 @@
             <li class="nav-item"><a class="nav-link" href="{{ backpack_url('permission') }}"><i class="nav-icon la la-key"></i> <span>Permissions</span></a></li>
         </ul>
     </li>
+
+<li class="nav-item nav-dropdown">
+    <a class="nav-link nav-dropdown-toggle" href="#"><i class="nav-icon la la-newspaper-o"></i>Code Snippets</a>
+    <ul class="nav-dropdown-items">
+      <li class="nav-item"><a class="nav-link" href="{{ backpack_url('snippet') }}"><i class="nav-icon la la-newspaper-o"></i> Code Snippets</a></li>
+      <li class="nav-item"><a class="nav-link" href="{{ backpack_url('category') }}"><i class="nav-icon la la-list"></i> Categories</a></li>
+      <li class="nav-item"><a class="nav-link" href="{{ backpack_url('tag') }}"><i class="nav-icon la la-tag"></i> Tags</a></li>
+    </ul>
+</li>

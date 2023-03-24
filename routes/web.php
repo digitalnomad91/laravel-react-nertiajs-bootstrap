@@ -33,6 +33,14 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-
+    Route::get('/payment', function () {
+        return Inertia::render('Payment');
+    })->name('payment');
 
 });
+
+
+
+
+
+Route::get('/snippets', 'App\Http\Controllers\Admin\SnippetCrudController@getSnippets')->name('request_snippets');

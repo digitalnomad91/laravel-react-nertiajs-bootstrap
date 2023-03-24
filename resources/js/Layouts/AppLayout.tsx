@@ -12,6 +12,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Team } from '@/types';
 import { usePage } from '@inertiajs/react'
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 
 interface Props {
@@ -51,6 +52,15 @@ export default function AppLayout({
   }
 
   return (
+    <StripeProvider
+      publishableKey="pk_test_KTga7hfC3Iqi0FHpN8xMiMbF"
+      urlScheme="your-url-scheme" 
+      // required for 3D Secure and bank redirects
+      merchantIdentifier="merchant.com.{{YOUR_APP_NAME}}" 
+      // required for Apple Pay
+    >
+
+    
     <div>
       <Head title={title} />
 
@@ -424,5 +434,6 @@ export default function AppLayout({
         <main>{children}</main>
       </div>
     </div>
+    </StripeProvider>
   );
 }

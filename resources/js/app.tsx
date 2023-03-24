@@ -7,6 +7,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { RouteContext } from '@/Hooks/useRoute';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
+
 const appName =
   window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
