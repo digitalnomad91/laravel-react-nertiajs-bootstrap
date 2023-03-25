@@ -117,7 +117,6 @@ export default function Payment() {
 
 <section
    className="
-   lg:pt-[120px]
    pb-12
    lg:pb-[90px]
    relative
