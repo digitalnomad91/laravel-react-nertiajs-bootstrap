@@ -79,10 +79,17 @@ class SnippetCrudController extends CrudController
             ]);
 
             $this->crud->addField([
+                'name' => 'description',
+                'label' => 'Description',
+                'type' => 'textarea',
+                'placeholder' => 'Enter the description for this item here.',
+            ]);
+
+            $this->crud->addField([
                 'name' => 'content',
                 'label' => 'Content',
                 'type' => 'textarea',
-                'placeholder' => 'Your textarea text here',
+                'placeholder' => 'Enter the code snippet here.',
             ]);
 
      

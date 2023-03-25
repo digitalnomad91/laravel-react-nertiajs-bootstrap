@@ -33,14 +33,11 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
-
-    Route::get('/payment', function () {
-        return Inertia::render('Payment');
-    })->name('payment');
-
 });
 
-
+Route::get('/payment', function () {
+    return Inertia::render('Payment');
+})->name('payment');
 
 Route::controller(StripePaymentController::class)->group(function(){
     Route::post('stripe', 'stripePost')->name('stripe.post');
