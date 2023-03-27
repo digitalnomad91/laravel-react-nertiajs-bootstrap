@@ -80,7 +80,7 @@ export default function AppLayout({
               <div className="flex">
                 {/* <!-- Logo --> */}
                 <div className="flex-shrink-0 flex items-center">
-                  <Link href={route('dashboard')}>
+                  <Link href={route('/')}>
                     <ApplicationMark className="block h-9 w-auto" />
                   </Link>
                 </div>
@@ -105,10 +105,10 @@ export default function AppLayout({
           <div className="sm:fixed sm:top-0 sm:right-0 p-6 text-right">
             {page.props.auth.user ? (
               <Link
-                href={route('dashboard')}
+                href={route('profile.show')}
                 className="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
               >
-                Dashboard
+                Profile
               </Link>
             ) : (
               <>
@@ -137,7 +137,7 @@ export default function AppLayout({
 
 
 
-              {!props.canLogin ? (
+              {props.canLogin != true ? (
 
               <div className="hidden sm:flex sm:items-center sm:ml-6">
                 <div className="ml-3 relative">
@@ -298,7 +298,7 @@ export default function AppLayout({
               </div>
         ) : null}
 
-        
+
               {/* <!-- Hamburger --> */}
               <div className="-mr-2 flex items-center sm:hidden">
                 <button
@@ -348,15 +348,15 @@ export default function AppLayout({
           >
             <div className="pt-2 pb-3 space-y-1">
               <ResponsiveNavLink
-                href={route('dashboard')}
-                active={route().current('dashboard')}
+                href={route('profile.show')}
+                active={route().current('profile.show')}
               >
-                Dashboard
+                Profile
               </ResponsiveNavLink>
             </div>
 
             {/* <!-- Responsive Settings Options --> */}
-            {!props.canLogin ? (
+            {props.canLogin != true ? (
             <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
               <div className="flex items-center px-4">
                 {page.props.jetstream.managesProfilePhotos ? (
