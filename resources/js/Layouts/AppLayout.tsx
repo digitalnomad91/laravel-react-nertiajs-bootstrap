@@ -17,12 +17,20 @@ import { usePage } from '@inertiajs/react'
 interface Props {
   title: string;
   renderHeader?(): JSX.Element;
+  canLogin: boolean;
+  canRegister: boolean;
+  laravelVersion: string;
+  phpVersion: string;
 }
 
 export default function AppLayout({
   title,
   renderHeader,
   children,
+  canLogin,
+  canRegister,
+  laravelVersion,
+  phpVersion,
 }: PropsWithChildren<Props>) {
   const page = useTypedPage();
   const route = useRoute();
@@ -30,6 +38,8 @@ export default function AppLayout({
     useState(false);
   
     const { url, component } = usePage()
+
+    const props = usePage().props;
 
     useEffect(() => {
       const use = async () => {
@@ -85,16 +95,49 @@ export default function AppLayout({
                   </NavLink>
 
                   
-                  {page.props.auth.user?.is_admin &&
+                  {page.props.auth.user?.is_admin ? (
                   <NavLink href="/admin" className={url === '/admin' ? 'active' : ''}>Administrator</NavLink>
-                  }
+                  ) : null}
 
                 </div>
 
+                {props.canLogin ? (
+          <div className="sm:fixed sm:top-0 sm:right-0 p-6 text-right">
+            {page.props.auth.user ? (
+              <Link
+                href={route('dashboard')}
+                className="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href={route('login')}
+                  className="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+                >
+                  Log in
+                </Link>
 
+                {props.canRegister ? (
+                  <Link
+                    href={route('register')}
+                    className="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+                  >
+                    Register
+                  </Link>
+                ) : null}
+              </>
+            )}
+          </div>
+        ) : null}
 
 
               </div>
+
+
+
+              {!props.canLogin ? (
 
               <div className="hidden sm:flex sm:items-center sm:ml-6">
                 <div className="ml-3 relative">
@@ -253,7 +296,9 @@ export default function AppLayout({
                   </Dropdown>
                 </div>
               </div>
+        ) : null}
 
+        
               {/* <!-- Hamburger --> */}
               <div className="-mr-2 flex items-center sm:hidden">
                 <button
@@ -306,11 +351,12 @@ export default function AppLayout({
                 href={route('dashboard')}
                 active={route().current('dashboard')}
               >
-                Dashboard3
+                Dashboard
               </ResponsiveNavLink>
             </div>
 
             {/* <!-- Responsive Settings Options --> */}
+            {!props.canLogin ? (
             <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
               <div className="flex items-center px-4">
                 {page.props.jetstream.managesProfilePhotos ? (
@@ -416,6 +462,12 @@ export default function AppLayout({
                 ) : null}
               </div>
             </div>
+            ) : null}
+
+
+
+
+
           </div>
         </nav>
 
