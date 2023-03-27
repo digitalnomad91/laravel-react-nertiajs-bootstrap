@@ -16,23 +16,14 @@ use App\Http\Controllers\StripePaymentController;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Dashboard', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('home');
+Route::get('/', 'App\Http\Controllers\SnippetsController@index')->name('home');
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', 'App\Http\Controllers\SnippetsController@index')->name('dashboard');
 });
 
 Route::get('/payment', function () {
@@ -40,8 +31,14 @@ Route::get('/payment', function () {
 })->name('payment');
 
 Route::controller(StripePaymentController::class)->group(function(){
-    Route::post('stripe', 'stripePost')->name('stripe.post');
+    Route::get('stripe', 'stripePost')->name('stripe.post');
+    Route::get('success', 'successfulPayment')->name('stripe.success');
 });
 
 
 Route::get('/snippets', 'App\Http\Controllers\Admin\SnippetCrudController@getSnippets')->name('request_snippets');
+
+
+Route::get('/admin/login', function () {
+    return redirect('/login');
+});

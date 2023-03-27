@@ -1,7 +1,7 @@
 import { router } from '@inertiajs/core';
 import { Link, Head } from '@inertiajs/react';
 import classNames from 'classnames';
-import React, { PropsWithChildren, useState } from 'react';
+import React, { PropsWithChildren, useState, useEffect } from 'react';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
 import ApplicationMark from '@/Components/ApplicationMark';
@@ -31,6 +31,12 @@ export default function AppLayout({
   
     const { url, component } = usePage()
 
+    useEffect(() => {
+      const use = async () => {
+        (await import('tw-elements')).default;
+      };
+      use();
+    }, []);
 
   function switchToTeam(e: React.FormEvent, team: Team) {
     e.preventDefault();
@@ -78,14 +84,10 @@ export default function AppLayout({
                     Code Snippets
                   </NavLink>
 
-                  <NavLink
-                    href={route('payment')}
-                    active={route().current('payment')}
-                  >
-                    Payment
-                  </NavLink>
+                  
+                  {page.props.auth.user?.is_admin ? (
                   <NavLink href="/admin" className={url === '/admin' ? 'active' : ''}>Administrator</NavLink>
-
+                  ) : null}
 
                 </div>
 

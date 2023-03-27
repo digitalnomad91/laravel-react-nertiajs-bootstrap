@@ -41,8 +41,20 @@ class UserCrudController extends CrudController
     {
         CRUD::column('name');
         CRUD::column('email');
+        CRUD::column('subscribed_until');
         CRUD::column('password');
 
+        // dropdown filter
+        CRUD::addFilter([
+            'name'  => 'email',
+            'type'  => 'dropdown',
+            'label' => 'Status'
+        ], [
+            1 => 'Free Membership',
+            2 => 'Active Paid Membership',
+        ], function($value) { // if the filter is active
+            CRUD::addClause('where', 'email', $value);
+        });
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');

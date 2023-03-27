@@ -53,8 +53,8 @@ class SnippetCrudController extends CrudController
             ]);
             $this->crud->addColumn('tags');
 
-
         });
+        
 
         /*
         |--------------------------------------------------------------------------

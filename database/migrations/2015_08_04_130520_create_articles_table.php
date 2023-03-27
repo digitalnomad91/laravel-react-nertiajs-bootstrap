@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateSnippetsTable extends Migration
+class CreateSnippetsTable2 extends Migration
 {
     /**
      * Run the migrations.
@@ -20,7 +20,6 @@ class CreateSnippetsTable extends Migration
             $table->text('content');
             $table->string('image')->nullable();
             $table->enum('status', ['PUBLISHED', 'DRAFT'])->default('PUBLISHED');
-            $table->date('date');
             $table->boolean('featured')->default(0);
             $table->timestamps();
             $table->softDeletes();

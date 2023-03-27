@@ -28,12 +28,12 @@ class CategoryCrudController extends CrudController
         CRUD::addColumn('slug');
         CRUD::addColumn('parent');
         CRUD::addColumn([   // select_multiple: n-n relationship (with pivot table)
-            'label'     => 'Articles', // Table column heading
+            'label'     => 'Snippets', // Table column heading
             'type'      => 'relationship_count',
-            'name'      => 'articles', // the method that defines the relationship in your Model
+            'name'      => 'snippets', // the method that defines the relationship in your Model
             'wrapper'   => [
                 'href' => function ($crud, $column, $entry, $related_key) {
-                    return backpack_url('article?category_id='.$entry->getKey());
+                    return backpack_url('snippet?category_id='.$entry->getKey());
                 },
             ],
         ]);

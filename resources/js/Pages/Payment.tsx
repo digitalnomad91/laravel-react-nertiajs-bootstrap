@@ -1,104 +1,91 @@
 import AppLayout from "@/Layouts/AppLayout";
-import { React, useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { router } from "@inertiajs/react";
 
 import { Link, useForm, Head } from "@inertiajs/react";
 import useRoute from "@/Hooks/useRoute";
+import {
+   CardNumberElement,
+   CardExpiryElement,
+   CardCvcElement,
+   useStripe, useElements, 
+} from "@stripe/react-stripe-js";
+
+
 
 export default function Payment() {
-  const route = useRoute();
-  const form = useForm({
-    email: "",
-    password: "",
-    remember: "",
-  });
+    
+    const [error, setError] = useState(null);
+    const [metadata, setMetadata] = useState(null);
+    const [succeeded, setSucceeded] = useState(false);
+    const [processing, setProcessing] = useState(false);
+    const [clientSecret, setClientSecret] = useState('');
+    const [selectedPlan, setSelectedPlan] = useState(null);
+    const [paymentAmount, setPaymentAmount] = useState('89.99');
+    const [name, setName] = useState("");
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    form.post(route("login"), {
-      onFinish: () => form.reset("password"),
-    });
-  }
 
-  useEffect(() => {
-    var $form = $(".require-validation");
+    const stripe = useStripe();
+    const elements = useElements();
 
-    $("form.require-validation").bind("submit", function (e) {
-      var $form = $(".require-validation"),
-        inputSelector = [
-          "input[type=email]",
-          "input[type=password]",
+  
+      const handlePlanChange = async (plan) => {
+        if(plan == 'quarterly') setPaymentAmount('29.99')
+            else setPaymentAmount('89.99')
 
-          "input[type=text]",
-          "input[type=file]",
+        const rawResponse = await fetch('/stripe?plan='+plan, {
+            method: 'GET',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+        });
+        const content = await rawResponse.json();
+        setClientSecret(content?.client_secret)
 
-          "textarea",
-        ].join(", "),
-        $inputs = $form.find(".required").find(inputSelector),
-        $errorMessage = $form.find("div.error"),
-        valid = true;
-
-      $errorMessage.addClass("hide");
-
-      $(".has-error").removeClass("has-error");
-
-      $inputs.each(function (i, el) {
-        var $input = $(el);
-
-        if ($input.val() === "") {
-          $input.parent().addClass("has-error");
-
-          $errorMessage.removeClass("hide");
-
-          e.preventDefault();
-        }
-      });
-
-      if (!$form.data("cc-on-file")) {
-        e.preventDefault();
-
-        Stripe.setPublishableKey(
-          $form.data("pk_test_TYooMQauvdEDq54NiTphI7jx")
-        );
-
-        Stripe.createToken(
-          {
-            number: $(".card-number").val(),
-
-            cvc: $(".card-cvc").val(),
-
-            exp_month: $(".card-expiry-month").val(),
-
-            exp_year: $(".card-expiry-year").val(),
-          },
-          stripeResponseHandler
-        );
+        setSelectedPlan(plan)
       }
-    });
 
-    function stripeResponseHandler(status, response) {
-      if (response.error) {
-        $(".error")
-          .removeClass("hide")
 
-          .find(".alert")
-
-          .text(response.error.message);
-      } else {
-        /* token contains id, last4, and card type */
-
-        var token = response["id"];
-
-        $form.find("input[type=text]").empty();
-
-        $form.append(
-          "<input type='hidden' name='stripeToken' value='" + token + "'/>"
-        );
-
-        $form.get(0).submit();
+      
+    const handleSubmit = async () => {
+      if (!stripe || !elements) {
+        return;
       }
-    }
-  }, []);
+      setProcessing(true);
+
+      // card number element as the card element
+      const cardNumberElement = elements?.getElement(CardNumberElement);
+  
+      if (cardNumberElement) {
+
+        const payload = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+              card: cardNumberElement,
+              billing_details: {
+                name
+              }
+            }
+          });
+      
+          console.log(payload)
+
+
+          if (payload.error) {
+            setError(`Payment failed: ${payload.error.message}`);
+            setProcessing(false);
+            console.log("[error]", payload.error);
+          } else {
+            setError(null);
+            setSucceeded(true);
+            setProcessing(false);
+          }
+
+
+      }
+    };
+  
+
 
   return (
     <AppLayout
@@ -124,1154 +111,209 @@ export default function Payment() {
    overflow-hidden
    "
    >
-   <div className="container">
-      <div className="flex flex-wrap -mx-4">
-         <div className="w-full px-4">
-            <div className="text-center mx-auto mb-[60px] lg:mb-20 max-w-[510px]">
-               <span className="font-semibold text-lg text-primary mb-2 block">
-               Pricing Table
-               </span>
-               <h2
-                  className="
-                  font-bold
-                  text-3xl
-                  sm:text-4xl
-                  md:text-[40px]
-                  text-dark
-                  mb-4
-                  "
-                  >
-                  Our Pricing Plan
-               </h2>
-               <p className="text-base text-body-color">
-                  There are many variations of passages of Lorem Ipsum available
-                  but the majority have suffered alteration in some form.
-               </p>
+        <div className="bg-white dark:bg-gray-900">
+            <div className="container px-6 py-8 mx-auto">
+                <p className="text-xl text-center text-gray-500 dark:text-gray-300">
+                    Choose your plan
+                </p>
+
+                <h1 className="mt-4 text-3xl font-semibold text-center text-gray-800 capitalize lg:text-4xl dark:text-white">Pricing Plan</h1>
+            
+                <div className="mt-6 space-y-8 xl:mt-12">
+
+                    <div className={`pointer flex items-center justify-between max-w-2xl px-8 py-4 mx-auto border cursor-pointer rounded-xl  ${selectedPlan == 'quarterly' ? 'border-blue-500' : ''}`} onClick={() => handlePlanChange('quarterly')}>
+                        <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-600 sm:h-9 sm:w-9" viewBox="0 0 20 20" fillRule="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+
+                            <div className="flex flex-col items-center mx-5 space-y-1">
+                                <h2 className="text-lg font-medium text-gray-700 sm:text-2xl dark:text-gray-200">3 Months (Quarterly) - $10 <span className="text-base font-medium">/Month</span></h2>
+                            </div>
+                        </div>
+                        
+                        <h2 className="text-2xl font-semibold text-gray-300 sm:text-4xl">$29.99</h2>
+                    </div>
+
+                    <div className={`pointer flex items-center justify-between max-w-2xl px-8 py-4 mx-auto border cursor-pointer rounded-xl  ${selectedPlan == 'annual' || selectedPlan == null ? 'border-blue-500' : ''}`} onClick={() => handlePlanChange('annual')}>
+                        <div className="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-400 sm:h-9 sm:w-9" viewBox="0 0 20 20" fillRule="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+
+                            <div className="flex flex-col mx-5 space-y-1">
+                                <h2 className="text-lg font-medium text-gray-700 sm:text-2xl dark:text-gray-200">1 Year (Annual) - $7.50 <span className="text-base font-medium">/Month</span></h2>
+                                <div className="px-2 text-xs text-blue-500 bg-gray-100 rounded-full sm:px-4 sm:py-1 dark:bg-gray-700 w-24 text-center">
+                                    Save 25%
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h2 className="text-2xl font-semibold text-blue-600 sm:text-4xl">$89.99</h2>
+                    </div>
+
+                    <div className="flex justify-center">
+                        <button
+                        type="button"
+                        className="inline-block rounded bg-primary px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+                        data-te-toggle="modal"
+                        data-te-target="#exampleModal"
+                        data-te-ripple-init
+                        data-te-ripple-color="light">
+                        Pay With Credit Card
+                        </button>
+                    </div>
+                </div>
             </div>
-         </div>
-      </div>
-      <div className="flex flex-wrap justify-center -mx-4">
-         <div className="w-full md:w-1/2 lg:w-1/3 px-4">
-            <div
-               className="
-               bg-white
-               rounded-xl
-               relative
-               z-10
-               overflow-hidden
-               border border-primary border-opacity-20
-               shadow-pricing
-               py-10
-               px-8
-               sm:p-12
-               lg:py-10 lg:px-6
-               xl:p-12
-               mb-10
-               "
-               >
-               <span className="text-primary font-semibold text-lg block mb-4">
-               Personal
-               </span>
-               <h2 className="font-bold text-dark mb-5 text-[42px]">
-                  $59
-                  <span className="text-base text-body-color font-medium">
-                  / year
-                  </span>
-               </h2>
-               <p
-                  className="
-                  text-base text-body-color
-                  pb-8
-                  mb-8
-                  border-b border-[#F2F2F2]
-                  "
-                  >
-                  Perfect for using in a personal website or a client project.
-               </p>
-               <div className="mb-7">
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     1 User
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     All UI components
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     Lifetime access
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     Free updates
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     Use on 1 (one) project
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     3 Months support
-                  </p>
-               </div>
-               <a
-                  href="javascript:void(0)"
-                  className="
-                  w-full
-                  block
-                  text-base
-                  font-semibold
-                  text-primary
-                  bg-transparent
-                  border border-[#D4DEFF]
-                  rounded-md
-                  text-center
-                  p-4
-                  hover:text-white hover:bg-primary hover:border-primary
-                  transition
-                  "
-                  >
-               Choose Personal
-               </a>
-               <div>
-                  <span className="absolute right-0 top-7 z-[-1]">
-                     <svg
-                        width="77"
-                        height="172"
-                        viewBox="0 0 77 172"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                        <circle cx="86" cy="86" r="86" fill="url(#paint0_linear)" />
-                        <defs>
-                           <linearGradient
-                              id="paint0_linear"
-                              x1="86"
-                              y1="0"
-                              x2="86"
-                              y2="172"
-                              gradientUnits="userSpaceOnUse"
-                              >
-                              <stop stop-color="#3056D3" stop-opacity="0.09" />
-                              <stop
-                                 offset="1"
-                                 stop-color="#C4C4C4"
-                                 stop-opacity="0"
-                                 />
-                           </linearGradient>
-                        </defs>
-                     </svg>
-                  </span>
-                  <span className="absolute right-4 top-4 z-[-1]">
-                     <svg
-                        width="41"
-                        height="89"
-                        viewBox="0 0 41 89"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                        <circle
-                           cx="38.9138"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="1.42021"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 1.42021)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="1.4202"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 1.4202)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="1.42019"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 1.42019)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="1.4202"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 1.4202)"
-                           fill="#3056D3"
-                           />
-                     </svg>
-                  </span>
-               </div>
-            </div>
-         </div>
-         <div className="w-full md:w-1/2 lg:w-1/3 px-4">
-            <div
-               className="
-               bg-white
-               rounded-xl
-               relative
-               z-10
-               overflow-hidden
-               border border-primary border-opacity-20
-               shadow-pricing
-               py-10
-               px-8
-               sm:p-12
-               lg:py-10 lg:px-6
-               xl:p-12
-               mb-10
-               "
-               >
-               <span className="text-primary font-semibold text-lg block mb-4">
-               Business
-               </span>
-               <h2 className="font-bold text-dark mb-5 text-[42px]">
-                  $199
-                  <span className="text-base text-body-color font-medium">
-                  / year
-                  </span>
-               </h2>
-               <p
-                  className="
-                  text-base text-body-color
-                  pb-8
-                  mb-8
-                  border-b border-[#F2F2F2]
-                  "
-                  >
-                  Perfect for using in a Business website or a client project.
-               </p>
-               <div className="mb-7">
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     5 Users
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     All UI components
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     Lifetime access
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     Free updates
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     Use on 3 (Three) project
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     4 Months support
-                  </p>
-               </div>
-               <a
-                  href="javascript:void(0)"
-                  className="
-                  w-full
-                  block
-                  text-base
-                  font-semibold
-                  text-white
-                  bg-primary
-                  border border-primary
-                  rounded-md
-                  text-center
-                  p-4
-                  hover:bg-opacity-90
-                  transition
-                  "
-                  >
-               Choose Business
-               </a>
-               <div>
-                  <span className="absolute right-0 top-7 z-[-1]">
-                     <svg
-                        width="77"
-                        height="172"
-                        viewBox="0 0 77 172"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                        <circle cx="86" cy="86" r="86" fill="url(#paint0_linear)" />
-                        <defs>
-                           <linearGradient
-                              id="paint0_linear"
-                              x1="86"
-                              y1="0"
-                              x2="86"
-                              y2="172"
-                              gradientUnits="userSpaceOnUse"
-                              >
-                              <stop stop-color="#3056D3" stop-opacity="0.09" />
-                              <stop
-                                 offset="1"
-                                 stop-color="#C4C4C4"
-                                 stop-opacity="0"
-                                 />
-                           </linearGradient>
-                        </defs>
-                     </svg>
-                  </span>
-                  <span className="absolute right-4 top-4 z-[-1]">
-                     <svg
-                        width="41"
-                        height="89"
-                        viewBox="0 0 41 89"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                        <circle
-                           cx="38.9138"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="1.42021"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 1.42021)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="1.4202"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 1.4202)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="1.42019"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 1.42019)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="1.4202"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 1.4202)"
-                           fill="#3056D3"
-                           />
-                     </svg>
-                  </span>
-               </div>
-            </div>
-         </div>
-         <div className="w-full md:w-1/2 lg:w-1/3 px-4">
-            <div
-               className="
-               bg-white
-               rounded-xl
-               relative
-               z-10
-               overflow-hidden
-               border border-primary border-opacity-20
-               shadow-pricing
-               py-10
-               px-8
-               sm:p-12
-               lg:py-10 lg:px-6
-               xl:p-12
-               mb-10
-               "
-               >
-               <span className="text-primary font-semibold text-lg block mb-4">
-               Professional
-               </span>
-               <h2 className="font-bold text-dark mb-5 text-[42px]">
-                  $256
-                  <span className="text-base text-body-color font-medium">
-                  / year
-                  </span>
-               </h2>
-               <p
-                  className="
-                  text-base text-body-color
-                  pb-8
-                  mb-8
-                  border-b border-[#F2F2F2]
-                  "
-                  >
-                  Perfect for using in a Professional website or a client project.
-               </p>
-               <div className="mb-7">
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     Unlimited Users
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     All UI components
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     Lifetime access
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     Free updates
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     Use on Unlimited project
-                  </p>
-                  <p className="text-base text-body-color leading-loose mb-1">
-                     12 Months support
-                  </p>
-               </div>
-               <a
-                  href="javascript:void(0)"
-                  className="
-                  w-full
-                  block
-                  text-base
-                  font-semibold
-                  text-primary
-                  bg-transparent
-                  border border-[#D4DEFF]
-                  rounded-md
-                  text-center
-                  p-4
-                  hover:text-white hover:bg-primary hover:border-primary
-                  transition
-                  "
-                  >
-               Choose Professional
-               </a>
-               <div>
-                  <span className="absolute right-0 top-7 z-[-1]">
-                     <svg
-                        width="77"
-                        height="172"
-                        viewBox="0 0 77 172"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                        <circle cx="86" cy="86" r="86" fill="url(#paint0_linear)" />
-                        <defs>
-                           <linearGradient
-                              id="paint0_linear"
-                              x1="86"
-                              y1="0"
-                              x2="86"
-                              y2="172"
-                              gradientUnits="userSpaceOnUse"
-                              >
-                              <stop stop-color="#3056D3" stop-opacity="0.09" />
-                              <stop
-                                 offset="1"
-                                 stop-color="#C4C4C4"
-                                 stop-opacity="0"
-                                 />
-                           </linearGradient>
-                        </defs>
-                     </svg>
-                  </span>
-                  <span className="absolute right-4 top-4 z-[-1]">
-                     <svg
-                        width="41"
-                        height="89"
-                        viewBox="0 0 41 89"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                        <circle
-                           cx="38.9138"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="38.9138"
-                           cy="1.42021"
-                           r="1.42021"
-                           transform="rotate(180 38.9138 1.42021)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="26.4157"
-                           cy="1.4202"
-                           r="1.42021"
-                           transform="rotate(180 26.4157 1.4202)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="13.9177"
-                           cy="1.42019"
-                           r="1.42021"
-                           transform="rotate(180 13.9177 1.42019)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="87.4849"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 87.4849)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="74.9871"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 74.9871)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="62.4892"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 62.4892)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="38.3457"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 38.3457)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="13.634"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 13.634)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="50.2754"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 50.2754)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="26.1319"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 26.1319)"
-                           fill="#3056D3"
-                           />
-                        <circle
-                           cx="1.41963"
-                           cy="1.4202"
-                           r="1.42021"
-                           transform="rotate(180 1.41963 1.4202)"
-                           fill="#3056D3"
-                           />
-                     </svg>
-                  </span>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
+        </div>
 </section>
 
 
-          <div className="">
 
 
-          <form
-              role="form"
-              action="{{ route('stripe.post') }}"
-              method="post"
-              className="require-validation"
-              data-cc-on-file="false"
-              data-stripe-publishable-key="{{ env('STRIPE_KEY') }}"
-              id="payment-form"
-            >  
-            <div className="flex justify-center">
-              <div className="h-auto w-80 bg-white p-3 rounded-lg">
-                <p className="text-xl font-semibold">Payment Details</p>
-                <div className="input_text mt-6 relative">
-                  {" "}
-                  <input
-                    type="text"
-                    className="h-12 pl-7 outline-none px-2 focus:border-blue-900 transition-all w-full border-b "
-                    placeholder="John Row"
-                  />{" "}
-                  <span className="absolute left-0 text-sm -top-4">
-                    Cardholder Name
-                  </span>{" "}
-                  <i className="absolute left-2 top-4 text-gray-400 fa fa-user"></i>{" "}
-                </div>
-                <div className="input_text mt-8 relative">
-                  {" "}
-                  <input
-                    type="text"
-                    className="card-number h-12 pl-7 outline-none px-2 focus:border-blue-900 transition-all w-full border-b "
-                    placeholder="0000 0000 0000 0000"
-                    data-slots="0"
-                    data-accept="\d"
-                  />{" "}
-                  <span className="absolute left-0 text-sm -top-4">
-                    Card Number
-                  </span>{" "}
-                  <i className="absolute left-2 top-[14px] text-gray-400 text-sm fa fa-credit-card"></i>{" "}
-                </div>
-                <div className="mt-8 flex gap-5 ">
-                  <div className="input_text relative w-full">
-                    {" "}
-                    <input
-                      type="text"
-                      className="card-expiry-month h-12 pl-7 outline-none px-2 focus:border-blue-900 transition-all w-24 border-b "
-                      placeholder="mm"
-                      data-slots="my"
-                    />{" "}
-                    {" "}
-                    <input
-                      type="text"
-                      className="card-expiry-year h-12 pl-7 outline-none px-2 focus:border-blue-900 transition-all w-24 border-b "
-                      placeholder="yyyy"
-                      data-slots="my"
-                    />{" "}
 
-                    <span className="absolute left-0 text-sm -top-4">
-                      Expiration Date
-                    </span>{" "}
-                    <i className="absolute left-2 top-4 text-gray-400 fa fa-calendar-o"></i>{" "}
-                  </div>
-                  <div className="input_text relative w-full">
-                    {" "}
-                    <input
-                      type="text"
-                      className="card-cvc h-12 pl-7 outline-none px-2 focus:border-blue-900 transition-all w-full border-b "
-                      placeholder="000"
-                      data-slots="0"
-                      data-accept="\d"
-                    />{" "}
-                    <span className="absolute left-0 text-sm -top-4">CVV</span>{" "}
-                    <i className="absolute left-2 top-4 text-gray-400 fa fa-lock"></i>{" "}
-                  </div>
-                </div>
-                <p className="text-lg text-center mt-4 text-gray-600 font-semibold">
-                  Payment amount:$12.98
-                </p>
-                <div className="flex justify-center mt-4">
-                  {" "}
-                  <button className="outline-none pay h-12 bg-orange-600 text-white mb-3 hover:bg-orange-700 rounded-lg w-1/2 cursor-pointer transition-all">
-                    Pay
-                  </button>{" "}
-                </div>
-              </div>
+<div
+  data-te-modal-init
+  className="mt-30 fixed top-0 left-0 z-[1055] hidden h-full w-full overflow-y-auto overflow-x-hidden outline-none"
+  id="exampleModal"
+  tabIndex={-1}
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div
+    data-te-modal-dialog-ref
+    className="pointer-events-none relative flex min-h-[calc(100%-1rem)] w-auto translate-y-[-50px] items-center opacity-0 transition-all duration-300 ease-in-out min-[576px]:mx-auto min-[576px]:mt-7 min-[576px]:min-h-[calc(100%-3.5rem)] min-[576px]:max-w-[500px]">
+            <div
+      className="shadow-lg p-5 min-[576px]:shadow-[0_0.5rem_1rem_rgba(#000, 0.15)] pointer-events-auto relative flex w-full flex-col rounded-md border-none bg-white bg-clip-padding text-current shadow-lg outline-none">
+
+
+
+
+
+
+
+<div className="container px-6  mx-auto">
+    <div className="w-96 mx-auto rounded-lg bg-white text-gray-700">
+        <div className="= pt-1 pb-5">
+            <div className="bg-indigo-500 text-white overflow-hidden rounded-full w-20 h-20 -mt-16 mx-auto shadow-lg flex justify-center items-center">
+                <i className="mdi mdi-credit-card-outline text-3xl"></i>
             </div>
-            </form>
+        </div>
 
-          </div>
+
+        {error &&
+        <div className="flex bg-red-100 rounded-lg p-4 mb-4 text-sm text-red-700" role="alert">
+            <svg className="w-5 h-5 inline mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
+            <div>
+                {error}
+            </div>
+        </div>
+        }
+
+        {succeeded &&
+        <div className="flex bg-green-100 rounded-lg p-4 mb-4 text-sm text-green-700" role="alert">
+        <svg className="w-5 h-5 inline mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
+        <div>
+            Payment Successfully submitted, thanks!
+        </div>
+        </div>
+        }
+
+
+
+        <div className="mb-10">
+            <h1 className="text-center font-bold text-xl uppercase">Secure payment info</h1>
+        </div>
+        <div className="mb-3 flex -mx-2">
+            <div className="px-2">
+                <label htmlFor="type1" className="flex items-center cursor-pointer">
+                    <input type="radio" className="form-radio h-5 w-5 text-indigo-500" name="type" id="type1" defaultChecked />
+                    <img src="https://leadershipmemphis.org/wp-content/uploads/2020/08/780370.png" className="h-8 ml-3"/>
+                </label>
+            </div>
+            <div className="px-2">
+                <label htmlFor="type2" className="flex items-center cursor-pointer">
+                    <input type="radio" className="form-radio h-5 w-5 text-indigo-500" name="type" id="type2" />
+                    <img src="https://www.sketchappsources.com/resources/source-image/PayPalCard.png" className="h-8 ml-3"/>
+                </label>
+            </div>
+        </div>
+        <div className="mb-3">
+            <label className="font-bold text-sm mb-2 ml-1">Name on card</label>
+            <div>
+                <input onChange={({ target: { value } }) => setName(value)} className="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors" placeholder="John Smith" type="text"/>
+            </div>
+        </div>
+        <div className="mb-3">
+            <label className="font-bold text-sm mb-2 ml-1">Card number</label>
+            <div>
+                <CardNumberElement className="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors"/>
+            </div>
+        </div>
+        <div className="mb-3 -mx-2 flex items-end">
+            <div className="px-2 w-1/2">
+                <div>
+                <label className="font-bold text-sm mb-2 ml-1">Expiration date</label>
+                <CardExpiryElement className="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors"/>
+                </div>
+            </div>
+            <div className="px-2 w-1/2">
+                <label className="font-bold text-sm mb-2 ml-1">Security code</label>
+                <CardCvcElement className="w-full px-3 py-2 mb-1 border-2 border-gray-200 rounded-md focus:outline-none focus:border-indigo-500 transition-colors"/>
+            </div>
+        </div>
+
+        <div className="mb-4">
+            <strong>Total: ${paymentAmount}</strong>
+        </div>
+
+        <div>
+        <button onClick={handleSubmit} className="block w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-700 focus:bg-indigo-700 text-white rounded-lg px-3 py-3 font-semibold" disabled={processing || !stripe}>
+            {!processing && <span><i className="mdi mdi-lock-outline mr-1"></i> PAY NOW</span> }
+            {processing && <span>Processing</span> }
+        </button>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div className="flex items-end justify-end fixed bottom-0 right-0 mb-4 mr-4 z-10">
+    <div>
+        <a title="Buy me a beer" href="https://www.buymeacoffee.com/scottwindon" target="_blank" className="block w-16 h-16 rounded-full transition-all shadow hover:shadow-lg transform hover:scale-110 hover:rotate-12">
+            <img className="object-cover object-center w-full h-full rounded-full" src="https://i.pinimg.com/originals/60/fd/e8/60fde811b6be57094e0abc69d9c2622a.jpg"/>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
         </div>
       </div>
     </AppLayout>
