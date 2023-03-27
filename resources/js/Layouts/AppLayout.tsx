@@ -85,9 +85,9 @@ export default function AppLayout({
                   </NavLink>
 
                   
-                  {page.props.auth.user?.is_admin ? (
+                  {page.props.auth.user?.is_admin &&
                   <NavLink href="/admin" className={url === '/admin' ? 'active' : ''}>Administrator</NavLink>
-                  ) : null}
+                  }
 
                 </div>
 
