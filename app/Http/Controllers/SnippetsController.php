@@ -12,7 +12,7 @@ class SnippetsController extends Controller
 {
     public function index(Request $request)
     {
-        $results = \App\Models\Snippet::filter(Request::only('search', 'trashed'))
+        $results = \App\Models\Snippet::filter(Request::only('search', 'category'))
             ->paginate(10)
             ->appends(Request::all());
         $snippets = [];
@@ -21,9 +21,10 @@ class SnippetsController extends Controller
             $snippets[] = [
                 'id' => $snippet->id,
                 'title' => $snippet->title,
+                'slug' => $snippet->slug,
                 'created_at' => Carbon::createFromFormat('Y-m-d H:i:s', $snippet->created_at)->format('Y-m-d'),
                 'content' => $snippet->paid_item
-                    ? (\Auth::User()->subscribed_until == null
+                    ? (\Auth::User() && \Auth::User()->subscribed_until == null
                         ? 'Subscribed Members Only!'
                         : $snippet->content)
                     : $snippet->content,
@@ -32,10 +33,23 @@ class SnippetsController extends Controller
                 'tags' => (object) $snippet->tags()->get(),
             ];
         }
+
         return Inertia::render('Dashboard', [
             'snippets' => $snippets,
+            'categories' => \App\Models\Category::all(),
             'results' => $results,
             'filters' => Request::all('JavaScript', 'PHP'),
+        ]);
+    }
+
+    public function view(Request $request)
+    {
+        $snippet = \App\Models\Snippet::where('id', 1)
+            ->with('category')
+            ->first();
+
+        return Inertia::render('Snippet/Show', [
+            'snippet' => $snippet,
         ]);
     }
 }
