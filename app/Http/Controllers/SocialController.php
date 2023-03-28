@@ -16,7 +16,7 @@ class SocialController extends Controller
 {
     public function redirect($provider)
     {
-        return Socialite::driver($provider)->redirect('/');
+        return Socialite::driver($provider)->redirect();
     }
 
     public function callback($provider)
@@ -62,7 +62,7 @@ class SocialController extends Controller
                     $createUser->save();
                 }
 
-                return redirect('/account/settings');
+                return redirect('/user/profile');
             }
         } catch (Exception $exception) {
             dd($exception->getMessage());
