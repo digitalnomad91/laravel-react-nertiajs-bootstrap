@@ -19,8 +19,8 @@ class StripePaymentController extends Controller
             'sk_test_51MpN7VDsX4lVK5vvPnE3YtocIHPGxWGkHyLA6ekvGCXXije208LPUcAl1NrwqhEIT5FVi82h18vTCq4dhuox9NAr00BNJ3cJ16' // API Secret here
           );
 
-          if($request->get("plan") == "annual") $amount = 89999;
-          if($request->get("plan") == "quarterly") $amount = 29999;
+          if($request->get("plan") == "annual") $amount = 8999;
+          if($request->get("plan") == "quarterly") $amount = 2999;
 
             $intent = $stripe->paymentIntents->create(
                 array(
