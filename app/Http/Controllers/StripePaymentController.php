@@ -7,7 +7,6 @@ use Carbon\Carbon;
 
 class StripePaymentController extends Controller
 {
-
     /**
      * success response method.
      *
@@ -17,40 +16,57 @@ class StripePaymentController extends Controller
     {
         $stripe = new \Stripe\StripeClient(
             'sk_test_51MpN7VDsX4lVK5vvPnE3YtocIHPGxWGkHyLA6ekvGCXXije208LPUcAl1NrwqhEIT5FVi82h18vTCq4dhuox9NAr00BNJ3cJ16' // API Secret here
-          );
+        );
+        if ($request->get('plan') == 'annual') {
+            $amount = 8999;
+        }
+        if ($request->get('plan') == 'quarterly') {
+            $amount = 2999;
+        }
 
-          if($request->get("plan") == "annual") $amount = 8999;
-          if($request->get("plan") == "quarterly") $amount = 2999;
+        $intent = $stripe->paymentIntents->create([
+            'amount' => $amount,
+            'currency' => 'USD',
+            'automatic_payment_methods' => ['enabled' => true],
+            //'metadata' => array(
+            //'product_id' => $product_id,
+            //'licence_type' => $license_type
+            //),
+        ]);
 
-            $intent = $stripe->paymentIntents->create(
-                array(
-                    'amount' => $amount,
-                    'currency' => 'USD',
-                    'automatic_payment_methods' => array( 'enabled' => true ),
-                    //'metadata' => array(
-                        //'product_id' => $product_id,
-                        //'licence_type' => $license_type
-                    //),
-                )
-            );   
-
-            return response()->json($intent, 200);
-
+        return response()->json($intent, 200);
     }
 
+    public function successfulPayment(Request $request)
+    {
+        \Stripe\Stripe::setApiKey(
+            'sk_test_51MpN7VDsX4lVK5vvPnE3YtocIHPGxWGkHyLA6ekvGCXXije208LPUcAl1NrwqhEIT5FVi82h18vTCq4dhuox9NAr00BNJ3cJ16'
+        ); //env()
 
-    public function successfulPayment(Request $request) {
+        if ($request->get('plan') == 'annual') {
+            $amount = 8999;
+            $newDateTime = Carbon::now()->addYear();
+        }
+        if ($request->get('plan') == 'quarterly') {
+            $amount = 2999;
+            $newDateTime = Carbon::now()->addMonths(3);
+        }
+
+        //First Confirm Payment & Amount w/ Stripe.
+        $paymentIntent = \Stripe\PaymentIntent::retrieve($request->get('payment_intent_id'));
+        if ($paymentIntent->amount != $amount || $paymentIntent->status != 'succeeded' || !$paymentIntent) {
+            return response()->json(['error' => 'Payment could not be confirmed.'], 200);
+        }
+
+        //Get user & assign subscribed role.
         $user = \Auth::User();
         $role = \Backpack\PermissionManager\app\Models\Role::where('name', ' Subscribed Member ')->first();
         $user->assignRole($role);
 
-        $currentDateTime = Carbon::now();
-        $newDateTime = Carbon::now()->addDay();
+        //Update user's subscribed_until date.
         $user->subscribed_until = $newDateTime;
         $user->save();
 
-
         return response()->json($user, 200);
     }
-
 }
