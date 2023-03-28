@@ -6,8 +6,15 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
+    <meta http-equiv="Content-Security-Policy" 
+     content="
+        connect-src * https://api.stripe.com;
+        frame-src https://js.stripe.com https://hooks.stripe.com;
+        script-src * 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com;
+        object-src 'none';
+     "
+    />
+    
     <style>@import url(https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.min.css);</style>
     <style>
     /*
