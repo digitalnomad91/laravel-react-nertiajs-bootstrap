@@ -78,7 +78,7 @@ export default function Payment() {
                     document.querySelectorAll('[data-te-backdrop-show]').forEach(e => e.remove())
 
                     router.visit('/')
-                }, 1000)
+                }, 5000)
             }
         }
     }
