@@ -31,10 +31,6 @@ class SnippetsController extends Controller
                 'snippets' => $snippets,
                 'results' => $results,
                 'filters' => Request::all('JavaScript', 'PHP'),
-                'canLogin' => Route::has('login'),
-                'canRegister' => Route::has('register'),
-                'laravelVersion' => Application::VERSION,
-                'phpVersion' => PHP_VERSION,
             ]);
 
     }
