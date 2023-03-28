@@ -22,7 +22,11 @@ class SnippetsController extends Controller
                 'id' => $snippet->id,
                 'title' => $snippet->title,
                 'created_at' => Carbon::createFromFormat('Y-m-d H:i:s', $snippet->created_at)->format('Y-m-d'),
-                'content' => $snippet->content,
+                'content' => $snippet->paid_item
+                    ? (\Auth::user->subscribed_until == null
+                        ? 'Subscribed Members Only!'
+                        : $snippet->content)
+                    : $snippet->content,
                 'paid_item' => $snippet->paid_item,
                 'category' => $snippet->category()->first(),
                 'tags' => (object) $snippet->tags()->get(),
