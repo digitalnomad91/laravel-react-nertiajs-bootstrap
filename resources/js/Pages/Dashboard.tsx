@@ -10,8 +10,10 @@ import SearchFilter from '@/Components/SearchFilter'
 export default function Dashboard() {
     const page = useTypedPage()
 
-    const { results } = usePage().props
+    const { results, categories } = usePage().props
     const { data, links } = results
+
+    console.log(categories)
 
     const [todos, setTodos] = useState([])
     const [loading, setLoading] = useState(true)
@@ -19,7 +21,7 @@ export default function Dashboard() {
 
     const colors = ['green', 'indigo', 'red']
 
-    const fetchTodos = async () => {
+    /*const fetchTodos = async () => {
         try {
             const response = await fetch('/snippets')
             const data = await response.json()
@@ -27,18 +29,19 @@ export default function Dashboard() {
 
             setTimeout(function () {
                 document.querySelectorAll('code').forEach(el => {
-                    console.log(el)
-                    // then highlight each
                     hljs.highlightElement(el)
                 })
             }, 100)
         } catch (error) {
             console.log(error)
         }
-    }
+    }*/
 
     useEffect(() => {
-        fetchTodos()
+        document.querySelectorAll('code').forEach(el => {
+            hljs.highlightElement(el)
+        })
+        //fetchTodos()
     }, [])
 
     return (
@@ -63,7 +66,9 @@ export default function Dashboard() {
                                             <span className="mt-1 text-gray-500 text-sm hidden">12 Jun 2019</span>
                                         </div>
                                         <div className="md:flex-grow">
-                                            <h2 className="text-2xl font-medium text-white title-font mb-2">{todoItem.title}</h2>
+                                            <h2 className="text-2xl font-medium text-white title-font mb-2">
+                                                (<Link href={'/snippet/' + todoItem.slug}>{todoItem.title}</Link>)
+                                            </h2>
 
                                             {todoItem.paid_item == true && (
                                                 <Link
@@ -110,7 +115,6 @@ export default function Dashboard() {
                                 </div>
                             )
                         })}
-
                         <Pagination links={links} />
                     </div>
                 </div>
