@@ -42,9 +42,9 @@ class SnippetsController extends Controller
         ]);
     }
 
-    public function view(Request $request)
+    public function view($slug)
     {
-        $snippet = \App\Models\Snippet::where('id', 1)
+        $snippet = \App\Models\Snippet::where('slug', $slug)
             ->with('category')
             ->first();
 
