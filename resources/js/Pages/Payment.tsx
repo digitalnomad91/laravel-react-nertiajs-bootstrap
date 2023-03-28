@@ -72,6 +72,8 @@ export default function Payment() {
                 setSucceeded(true)
                 //setProcessing(false)
 
+                console.log('payload', payload)
+
                 //wait 100ms for modal to close then re-route to home page
                 setTimeout(function () {
                     const myModalEl = document.getElementById('exampleModal')?.remove()
@@ -252,10 +254,7 @@ export default function Payment() {
                                                         id="type1"
                                                         defaultChecked
                                                     />
-                                                    <img
-                                                        src="https://leadershipmemphis.org/wp-content/uploads/2020/08/780370.png"
-                                                        className="h-8 ml-3"
-                                                    />
+                                                    <img src="/images/credit_cards.png" className="h-8 ml-3" />
                                                 </label>
                                             </div>
                                             <div className="px-2">
