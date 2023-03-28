@@ -60,7 +60,7 @@ class StripePaymentController extends Controller
 
         //Get user & assign subscribed role.
         $user = \Auth::User();
-        $role = \Backpack\PermissionManager\app\Models\Role::where('name', ' Subscribed Member ')->first();
+        $role = \Backpack\PermissionManager\app\Models\Role::where('name', ' Subscribed Member')->first();
         $user->assignRole($role);
 
         //Update user's subscribed_until date.
