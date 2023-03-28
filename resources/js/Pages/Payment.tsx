@@ -33,7 +33,7 @@ export default function Payment() {
 
     /* Call the backend for a clientSecret from Stripe */
     const getStripeClientSecret = async (plan: string) => {
-        const rawResponse = await fetch('/stripe?plan=' + plan, {
+        const rawResponse = await fetch('/payment/credit_card?plan=' + plan, {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -42,6 +42,18 @@ export default function Payment() {
         })
         const content = await rawResponse.json()
         setClientSecret(content?.client_secret)
+    }
+
+    /* Call post-payment backend API which updates user to subscribed & confirms payment + amount. */
+    const postConfirmPayment = async (plan: string, clientSecret: string) => {
+        const rawResponse = await fetch('/payment/confirm?plan=' + plan + '&payment_intent_id=' + clientSecret, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
+        return await rawResponse.json()
     }
 
     /* Handle when user submits credit card Stripe form */
@@ -68,19 +80,23 @@ export default function Payment() {
                 setError(`Payment failed: ${payload.error.message}`)
                 setProcessing(false)
             } else {
-                setError(false)
-                setSucceeded(true)
-                //setProcessing(false)
+                const paymentConfirmation = await postConfirmPayment(selectedPlan, payload.paymentIntent.id)
+                if (paymentConfirmation?.error) {
+                    setError(`Payment failed: ${paymentConfirmation?.error}`)
+                    setProcessing(false)
+                } else {
+                    setError(false)
+                    setSucceeded(true)
+                    //setProcessing(false)
 
-                console.log('payload', payload)
+                    //wait 100ms for modal to close then re-route to home page
+                    setTimeout(function () {
+                        const myModalEl = document.getElementById('exampleModal')?.remove()
+                        document.querySelectorAll('[data-te-backdrop-show]').forEach(e => e.remove())
 
-                //wait 100ms for modal to close then re-route to home page
-                setTimeout(function () {
-                    const myModalEl = document.getElementById('exampleModal')?.remove()
-                    document.querySelectorAll('[data-te-backdrop-show]').forEach(e => e.remove())
-
-                    router.visit('/')
-                }, 5000)
+                        router.visit('/')
+                    }, 5000)
+                }
             }
         }
     }
