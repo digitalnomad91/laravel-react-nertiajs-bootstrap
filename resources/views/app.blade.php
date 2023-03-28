@@ -15,7 +15,6 @@
      "
     />
     
-    <style>@import url(https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.min.css);</style>
     <style>
     /*
     module.exports = {
@@ -165,4 +164,6 @@ dl, dt, dd, ol, ul, li, fieldset, form, label, legend, article, main, nav, ins {
   <script src="https://js.stripe.com/v3/"></script>
     <link rel="stylesheet"
   href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <style>@import url(https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.min.css);</style>
+
 </html>
