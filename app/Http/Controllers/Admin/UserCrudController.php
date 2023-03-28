@@ -21,7 +21,7 @@ class UserCrudController extends CrudController
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
-     * 
+     *
      * @return void
      */
     public function setup()
@@ -33,7 +33,7 @@ class UserCrudController extends CrudController
 
     /**
      * Define what happens when the List operation is loaded.
-     * 
+     *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
@@ -43,9 +43,14 @@ class UserCrudController extends CrudController
         CRUD::column('email');
         CRUD::column('subscribed_until');
         CRUD::column('password');
+        $this->crud->addColumn([
+            'name' => 'name', // The db column name
+            'label' => 'Tag Name', // Table column heading
+            'type' => 'Text',
+        ]);
 
         // dropdown filter
-        CRUD::addFilter([
+        /*CRUD::addFilter([
             'name'  => 'email',
             'type'  => 'dropdown',
             'label' => 'Status'
@@ -54,17 +59,17 @@ class UserCrudController extends CrudController
             2 => 'Active Paid Membership',
         ], function($value) { // if the filter is active
             CRUD::addClause('where', 'email', $value);
-        });
+        });*/
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
-         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']); 
+         * - CRUD::addColumn(['name' => 'price', 'type' => 'number']);
          */
     }
 
     /**
      * Define what happens when the Create operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
@@ -77,17 +82,21 @@ class UserCrudController extends CrudController
         CRUD::field('name');
         CRUD::field('email');
         CRUD::field('password');
-
+        $this->crud->addColumn([
+            'name' => 'profile_photo_path', // The db column name
+            'label' => 'Tag Name', // Table column heading
+            'type' => 'Text',
+        ]);
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');
-         * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
+         * - CRUD::addField(['name' => 'price', 'type' => 'number']));
          */
     }
 
     /**
      * Define what happens when the Update operation is loaded.
-     * 
+     *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
