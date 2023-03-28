@@ -22,11 +22,11 @@ class Snippet extends Model
     protected $primaryKey = 'id';
     public $timestamps = true;
     // protected $guarded = ['id'];
-    protected $fillable = ['slug', 'title', 'content', 'category_id', 'paid_item'];
+    protected $fillable = ['slug', 'title', 'content', 'description', 'category_id', 'paid_item'];
     // protected $hidden = [];
     // protected $dates = [];
     protected $casts = [
-        'paid_item'  => 'boolean',
+        'paid_item' => 'boolean',
     ];
 
     /**
@@ -72,21 +72,31 @@ class Snippet extends Model
     */
     public function scopeFilter($query, array $filters)
     {
-        $query->when($filters['search'] ?? null, function ($query, $search) {
-            $query->where('title', 'like', '%'.$search.'%');
-        })->when($filters['trashed'] ?? null, function ($query, $trashed) {
-            if ($trashed === 'with') {
-                $query->withTrashed();
-            } elseif ($trashed === 'only') {
-                $query->onlyTrashed();
-            }
-        });
+        $query
+            ->when($filters['search'] ?? null, function ($query, $search) {
+                $query->whereOr('title', 'like', '%' . $search . '%');
+                $query->whereOr('description', 'like', '%' . $search . '%');
+                $query->whereOr('content', 'like', '%' . $search . '%');
+            })
+            ->when($filters['category'] ?? null, function ($query, $category) {
+                $query->where('category_id', $category);
+            })
+            ->when($filters['paid_only'] ?? null, function ($query, $paid_only) {
+                if ($paid_only === 'free') {
+                    $query->onlyFree();
+                } elseif ($paid_only === 'paid') {
+                    $query->onlyPaid();
+                }
+            });
     }
-    public function scopePublished($query)
+    public function scopeOnlyFree($query)
     {
-        return $query->where('status', 'PUBLISHED')
-            ->where('date', '<=', date('Y-m-d'))
-            ->orderBy('date', 'DESC');
+        return $query->where('paid_item', '0');
+    }
+
+    public function onlyPaid($query)
+    {
+        return $query->where('paid_item', '1');
     }
 
     /*
