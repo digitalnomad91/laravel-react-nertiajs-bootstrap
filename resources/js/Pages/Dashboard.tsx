@@ -50,12 +50,12 @@ export default function Dashboard() {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <SearchFilter />
 
-                    <div className="mt-4 bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+                    <div className="mt-4 overflow-hidden shadow-xl sm:rounded-lg">
                         {page?.props?.snippets.map(todoItem => {
                             return (
                                 <div
                                     key={todoItem.id}
-                                    className="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500"
+                                    className="mb-6 scale-100 p-6 dark:bg-gray-800 dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500"
                                 >
                                     <div className="py-8 flex flex-wrap md:flex-nowrap">
                                         <div className="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
