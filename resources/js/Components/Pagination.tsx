@@ -22,7 +22,7 @@ export default function Pagination({ links }) {
                                             className="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 rounded"
                                         >{link.label.replace(/&raquo;/gi, '').replace(/&laquo;/gi, '')}</div>) :
 
-                                    (<Link
+                                    (<Link key={key}
                                                 className={getClassName(link.active)}
                                                 href={ link.url }
                                             >{link.label.replace(/&raquo;/gi, '').replace(/&laquo;/gi, '')}</Link>)
