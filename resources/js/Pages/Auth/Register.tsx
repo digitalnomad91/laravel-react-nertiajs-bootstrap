@@ -163,7 +163,7 @@ export default function Register() {
                 </div>
 
                 <div className="w-full pt-4">
-                    <button
+                    <div
                         className="bg-red-500 p-2 font-semibold text-white inline-flex items-center space-x-2 rounded"
                         onClick={() => ShowAuthWindow({ path: 'login/google' })}
                     >
@@ -185,7 +185,7 @@ export default function Register() {
                             </g>
                         </svg>
                         &nbsp; Login With Google
-                    </button>
+                    </div>
                 </div>
             </form>
         </AuthenticationCard>
