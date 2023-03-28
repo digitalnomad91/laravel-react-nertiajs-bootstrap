@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateSnippetsTable2 extends Migration
+class CreateSnippetsTable extends Migration
 {
     /**
      * Run the migrations.
