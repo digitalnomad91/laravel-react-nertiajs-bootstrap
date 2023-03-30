@@ -382,6 +382,10 @@ export default function AppLayout({ title, renderHeader, children, canLogin, can
                                 </div>
 
                                 <div className="mt-3 space-y-1">
+                                    <ResponsiveNavLink href={route('profile.show')} active={route().current('profile.show')}>
+                                        Profile
+                                    </ResponsiveNavLink>
+
                                     {page.props.jetstream.hasApiFeatures ? (
                                         <ResponsiveNavLink href={route('api-tokens.index')} active={route().current('api-tokens.index')}>
                                             API Tokens
