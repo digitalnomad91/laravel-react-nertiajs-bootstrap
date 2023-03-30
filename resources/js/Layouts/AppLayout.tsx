@@ -126,24 +126,6 @@ export default function AppLayout({ title, renderHeader, children, canLogin, can
                                         </NavLink>
                                     ) : null}
                                 </div>
-
-                                {!page.props.auth.user ? (
-                                    <div className="sm:absolute sm:top-0 sm:right-0 p-6 text-right">
-                                        <Link
-                                            href={route('login')}
-                                            className="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-                                        >
-                                            Log in
-                                        </Link>
-
-                                        <Link
-                                            href={route('register')}
-                                            className="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-                                        >
-                                            Register
-                                        </Link>
-                                    </div>
-                                ) : null}
                             </div>
 
                             <div className="flex items-center">
@@ -179,8 +161,28 @@ export default function AppLayout({ title, renderHeader, children, canLogin, can
                                 </div>
                             </div>
 
+                            {!page.props.auth.user ? (
+                                <div className="hidden md:relative  sm:flex sm:items-center">
+                                    <div className="ml-3 relative">
+                                        <Link
+                                            href={route('login')}
+                                            className="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+                                        >
+                                            Log in
+                                        </Link>
+
+                                        <Link
+                                            href={route('register')}
+                                            className="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+                                        >
+                                            Register
+                                        </Link>
+                                    </div>
+                                </div>
+                            ) : null}
+
                             {page.props.auth.user ? (
-                                <div className="hidden md:visible sm:flex sm:items-center">
+                                <div className="hidden md:block sm:flex sm:items-center">
                                     <div className="ml-3 relative">
                                         {/* <!-- Teams Dropdown --> */}
                                         {page.props.jetstream.hasTeamFeatures ? (
@@ -448,7 +450,18 @@ export default function AppLayout({ title, renderHeader, children, canLogin, can
                                     ) : null}
                                 </div>
                             </div>
-                        ) : null}
+                        ) : (
+                            <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+                                <div className="mt-3 space-y-1">
+                                    <ResponsiveNavLink href={route('profile.show')} active={route().current('profile.show')}>
+                                        Login
+                                    </ResponsiveNavLink>
+                                    <ResponsiveNavLink href={route('profile.show')} active={route().current('profile.show')}>
+                                        Register
+                                    </ResponsiveNavLink>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </nav>
 
