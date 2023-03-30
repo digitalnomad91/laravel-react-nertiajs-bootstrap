@@ -45,7 +45,7 @@ export default function Dashboard() {
         readOnly: false,
         cursorStyle: 'line',
         automaticLayout: true,
-        theme: 'vs',
+        theme: 'vs' + (localStorage.getItem('color-theme') === 'dark' ? '-dark' : ''),
         scrollbar: {
             // Subtle shadows to the left & top. Defaults to true.
             useShadows: true,
