@@ -37,7 +37,7 @@ class SocialController extends Controller
                     $isUser->username = $username;
                 }
                 $isUser->save();
-                return redirect('/account/settings');
+                return redirect('/user/profile');
             } else {
                 $createUser = User::create([
                     'name' => $user->name,
