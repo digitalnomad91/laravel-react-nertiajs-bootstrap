@@ -175,6 +175,32 @@ dl, dt, dd, ol, ul, li, fieldset, form, label, legend, article, main, nav, ins {
     } else {
       document.documentElement.classList.remove('dark');
     }
+
+    //Authorization popup window code
+    function ShowAuthWindow(options) {
+        options.windowName = options.windowName || 'ConnectWithOAuth' // should not include space for IE
+        options.windowOptions = options.windowOptions || 'location=0,status=0,width=420,height=600'
+        options.callback =
+            options.callback ||
+            function () {
+                window.location.reload()
+            }
+        var that = this
+        console.log(options.path)
+        that._oauthWindow = window.open(options.path, options.windowName, options.windowOptions)
+        that._oauthInterval = window.setInterval(function () {
+            if (
+                that._oauthWindow.closed ||
+                (typeof that._oauthWindow.location.hostname != 'undefined' &&
+                    that._oauthWindow.location.hostname.includes(window.location.hostname))
+            ) {
+                window.clearInterval(that._oauthInterval)
+                options.callback()
+                that._oauthWindow.close()
+            }
+        }, 1000)
+    }
+
   </script>
   <script src="https://js.stripe.com/v3/"></script>
     <link rel="stylesheet"
