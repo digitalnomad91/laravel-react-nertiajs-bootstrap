@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/images/code.png">
 
     <title inertia>{{ config('app.name', 'IOPrompts') }}</title>
 
@@ -21,7 +22,10 @@
         plugins: [require('@tailwindcss/forms'),]
     };
     */
-
+    .header_logo {
+      width: 40px;
+      height: 40px;
+    }
   .blurred-box{
   position: relative;
   top: calc(50% - 175px);
@@ -147,6 +151,7 @@ dl, dt, dd, ol, ul, li, fieldset, form, label, legend, article, main, nav, ins {
       }
     }
     </style>
+
     <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/index.min.css" />
@@ -159,8 +164,18 @@ dl, dt, dd, ol, ul, li, fieldset, form, label, legend, article, main, nav, ins {
   <body class="font-sans antialiased">
     @inertia
   </body>
-
-
+  <script>
+    // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
+    if (
+      localStorage.getItem('color-theme') === 'dark' ||
+      (!('color-theme' in localStorage) &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
   <script src="https://js.stripe.com/v3/"></script>
     <link rel="stylesheet"
   href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
