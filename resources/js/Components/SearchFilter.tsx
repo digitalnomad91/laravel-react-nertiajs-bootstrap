@@ -49,7 +49,7 @@ export default () => {
 
     return (
         <div className="flex items-center w-full mr-4">
-            <div className="relative flex w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 rounded shadow">
+            <div className="relative flex w-full text-gray-900 bg-gray-50 rounded-l-none dark:rounded-l-lg rounded-lg border border-gray-300 rounded shadow">
                 <div style={{ top: '100%' }} className={`absolute ${opened ? '' : 'hidden'}`}>
                     <div onClick={() => setOpened(false)} className="fixed inset-0 z-20 bg-black opacity-25"></div>
                     <div className="relative z-30 w-64 px-4 py-6 mt-2 bg-white rounded shadow-lg">
