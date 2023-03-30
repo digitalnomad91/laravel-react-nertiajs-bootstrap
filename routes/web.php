@@ -23,9 +23,9 @@ Route::controller(SnippetsController::class)->group(function () {
     Route::get('/snippet/{slug}', 'view')->name('snippet.view');
 });
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('/dashboard', 'App\Http\Controllers\SnippetsController@index')->name('dashboard');
-});
+//Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
+//    Route::get('/dashboard', 'App\Http\Controllers\SnippetsController@index')->name('dashboard');
+//});
 
 Route::get('/payment', function () {
     return Inertia::render('Payment');
@@ -50,4 +50,8 @@ Route::post('/settings', [TwoFactorAuthController::class, 'confirm'])->name('two
 
 Route::get('/admin/login', function () {
     return redirect('/login');
+});
+
+Route::get('/dashboard', function () {
+    return redirect('/');
 });
