@@ -182,7 +182,7 @@ export default function AppLayout({ title, renderHeader, children, canLogin, can
                             ) : null}
 
                             {page.props.auth.user ? (
-                                <div className="hidden md:block sm:flex sm:items-center">
+                                <div className="hidden md:relative sm:flex sm:items-center">
                                     <div className="ml-3 relative">
                                         {/* <!-- Teams Dropdown --> */}
                                         {page.props.jetstream.hasTeamFeatures ? (
