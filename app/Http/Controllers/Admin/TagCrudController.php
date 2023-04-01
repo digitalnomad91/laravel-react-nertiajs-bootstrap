@@ -14,8 +14,8 @@ class TagCrudController extends CrudController
 
     public function setup()
     {
-        $this->crud->setModel("\App\Models\Tag");
-        $this->crud->setRoute(config('backpack.base.route_prefix', 'admin').'/tag');
+        $this->crud->setModel('\App\Models\Tag');
+        $this->crud->setRoute(config('backpack.base.route_prefix', 'admin') . '/tag');
         $this->crud->setEntityNameStrings('tag', 'tags');
         $this->crud->setFromDb();
     }

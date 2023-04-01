@@ -127,7 +127,7 @@ export default function Dashboard() {
                                                             '-600 shadow-sm '
                                                         }
                                                     >
-                                                        {tag.name}
+                                                        {tag.name.en}
                                                     </span>
                                                 )
                                             })}

@@ -3,8 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateSnippetsTable extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -12,7 +11,7 @@ class CreateSnippetsTable extends Migration
      */
     public function up()
     {
-        Schema::create('snippets', function (Blueprint $table) {
+        Schema::create('articles', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('category_id')->unsigned();
             $table->string('title');
@@ -33,6 +32,6 @@ class CreateSnippetsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('snippets');
+        Schema::drop('articles');
     }
-}
+};

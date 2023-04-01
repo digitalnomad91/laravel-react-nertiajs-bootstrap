@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Session;
-use Stripe;
+
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Stripe;
 
 class StripePaymentController extends Controller
 {
@@ -54,7 +55,7 @@ class StripePaymentController extends Controller
 
         //First Confirm Payment & Amount w/ Stripe.
         $paymentIntent = \Stripe\PaymentIntent::retrieve($request->get('payment_intent_id'));
-        if ($paymentIntent->amount != $amount || $paymentIntent->status != 'succeeded' || !$paymentIntent) {
+        if ($paymentIntent->amount != $amount || $paymentIntent->status != 'succeeded' || ! $paymentIntent) {
             return response()->json(['error' => 'Payment could not be confirmed.'], 200);
         }
 

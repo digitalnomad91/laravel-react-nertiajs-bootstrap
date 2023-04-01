@@ -6,11 +6,16 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Spatie\Tags\HasTags;
 
 class Snippet extends Model
 {
     use CrudTrait;
     use Sluggable, SluggableScopeHelpers;
+    use Searchable;
+    use HasTags;
 
     /*
     |--------------------------------------------------------------------------
@@ -19,10 +24,14 @@ class Snippet extends Model
     */
 
     protected $table = 'snippets';
+
     protected $primaryKey = 'id';
+
     public $timestamps = true;
+
     // protected $guarded = ['id'];
     protected $fillable = ['slug', 'title', 'content', 'description', 'category_id', 'paid_item'];
+
     // protected $hidden = [];
     // protected $dates = [];
     protected $casts = [
@@ -31,8 +40,6 @@ class Snippet extends Model
 
     /**
      * Return the sluggable configuration array for this model.
-     *
-     * @return array
      */
     public function sluggable(): array
     {
@@ -60,11 +67,14 @@ class Snippet extends Model
         return $this->belongsTo('App\Models\Category', 'category_id');
     }
 
-    public function tags()
+    //public function tags()
+    //{
+    //    return $this->belongsToMany('App\Models\SnippetTag', 'snippet_tag');
+    // }
+    public function tags(): MorphToMany
     {
-        return $this->belongsToMany('App\Models\Tag', 'snippet_tag');
+        return $this->morphToMany(self::getTagClassName(), 'taggable', 'taggables', null, 'tag_id')->orderBy('order_column');
     }
-
     /*
     |--------------------------------------------------------------------------
     | SCOPES
@@ -89,6 +99,7 @@ class Snippet extends Model
                 }
             });
     }
+
     public function scopeOnlyFree($query)
     {
         return $query->where('paid_item', '0');

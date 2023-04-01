@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\NewsCRUD\app\Http\Requests\SnippetRequest;
-Use Carbon\Carbon;
-
+use Carbon\Carbon;
 
 class SnippetCrudController extends CrudController
 {
@@ -23,7 +22,7 @@ class SnippetCrudController extends CrudController
         |--------------------------------------------------------------------------
         */
         $this->crud->setModel(\App\Models\Snippet::class);
-        $this->crud->setRoute(config('backpack.base.route_prefix', 'admin').'/snippet');
+        $this->crud->setRoute(config('backpack.base.route_prefix', 'admin') . '/snippet');
         $this->crud->setEntityNameStrings('snippet', 'snippets');
 
         /*
@@ -45,16 +44,29 @@ class SnippetCrudController extends CrudController
                 'name' => 'category_id',
                 'entity' => 'category',
                 'attribute' => 'name',
-                'wrapper'   => [
+                'wrapper' => [
                     'href' => function ($crud, $column, $entry, $related_key) {
-                        return backpack_url('category/'.$related_key.'/show');
+                        return backpack_url('category/' . $related_key . '/show');
                     },
                 ],
             ]);
-            $this->crud->addColumn('tags');
-
+            $this->crud->addColumn([
+                // n-n relationship (with pivot table)
+                'label' => 'Tags', // Table column heading
+                'type' => 'select_multiple',
+                'name' => 'tags', // the method that defines the relationship in your Model
+                'entity' => 'tags', // the method that defines the relationship in your Model
+                'attribute' => 'name', // foreign key attribute that is shown to user
+                'model' => 'App\Models\Tag', // foreign key model
+                // also optional
+                'options' => function ($query) {
+                    return $query
+                        ->where('type', 'Code Snippet')
+                        ->orderBy('name', 'ASC')
+                        ->get();
+                }, // force the related options to be a custom query, instead of all(); you can use this to filter the results show in the select
+            ]);
         });
-        
 
         /*
         |--------------------------------------------------------------------------
@@ -92,43 +104,46 @@ class SnippetCrudController extends CrudController
                 'placeholder' => 'Enter the code snippet here.',
             ]);
 
-     
-            $this->crud->addField([   // SelectMultiple = n-n relationship (with pivot table)
-                'label'     => "Tags",
-                'type'      => 'select_multiple',
-                'name'      => 'tags', // the method that defines the relationship in your Model
-            
+            $this->crud->addField([
+                // SelectMultiple = n-n relationship (with pivot table)
+                'label' => 'Tags',
+                'type' => 'select_multiple',
+                'name' => 'tags', // the method that defines the relationship in your Model
+
                 // optional
-                'entity'    => 'tags', // the method that defines the relationship in your Model
-                'model'     => "App\Models\Tag", // foreign key model
+                'entity' => 'tags', // the method that defines the relationship in your Model
+                'model' => 'App\Models\Tag', // foreign key model
                 'attribute' => 'name', // foreign key attribute that is shown to user
-                'pivot'     => true, // on create&update, do you need to add/delete pivot table entries?
-            
+                'pivot' => true, // on create&update, do you need to add/delete pivot table entries?
+
                 // also optional
-                'options'   => (function ($query) {
-                    return $query->orderBy('name', 'ASC')->get();
-                }), // force the related options to be a custom query, instead of all(); you can use this to filter the results show in the select
+                'options' => function ($query) {
+                    return $query
+                        ->where('type', 'Code Snippet')
+                        ->orderBy('name', 'ASC')
+                        ->get();
+                }, // force the related options to be a custom query, instead of all(); you can use this to filter the results show in the select
             ]);
-            $this->crud->addField([  // Select
-                'label'     => "Category",
-                'type'      => 'select',
-                'name'      => 'category_id', // the db column for the foreign key
-             
+            $this->crud->addField([
+                // Select
+                'label' => 'Category',
+                'type' => 'select',
+                'name' => 'category_id', // the db column for the foreign key
+
                 // optional
                 // 'entity' should point to the method that defines the relationship in your Model
                 // defining entity will make Backpack guess 'model' and 'attribute'
-                'entity'    => 'category',
-             
-                // optional - manually specify the related model and attribute
-                'model'     => "App\Models\Category", // related model
-                'attribute' => 'name', // foreign key attribute that is shown to user
-             
-                // optional - force the related options to be a custom query, instead of all();
-                'options'   => (function ($query) {
-                     return $query->orderBy('name', 'ASC')->get();
-                 }), //  you can use this to filter the results show in the select
-             ]);
+                'entity' => 'category',
 
+                // optional - manually specify the related model and attribute
+                'model' => 'App\Models\Category', // related model
+                'attribute' => 'name', // foreign key attribute that is shown to user
+
+                // optional - force the related options to be a custom query, instead of all();
+                'options' => function ($query) {
+                    return $query->orderBy('name', 'ASC')->get();
+                }, //  you can use this to filter the results show in the select
+            ]);
 
             $this->crud->addField([
                 'name' => 'paid_item',
@@ -155,27 +170,25 @@ class SnippetCrudController extends CrudController
      */
     public function fetchTags()
     {
-        return $this->fetch(\Backpack\NewsCRUD\app\Models\Tag::class);
+        return $this->fetch(\App\Models\Tag::class);
     }
 
-
-    public function getSnippets() {
+    public function getSnippets()
+    {
         $results = \App\Models\Snippet::get();
 
-        foreach($results as $snippet) {
+        foreach ($results as $snippet) {
             $snippets[] = [
-                "id" => $snippet->id,
-                "title" => $snippet->title,
-                "created_at" => Carbon::createFromFormat('Y-m-d H:i:s', $snippet->created_at)->format('Y-m-d'),
-                "content" => $snippet->content,
-                "paid_item" => $snippet->paid_item,
-                "category" => $snippet->category()->first(),
-                "tags" => (object) $snippet->tags()->get(),
+                'id' => $snippet->id,
+                'title' => $snippet->title,
+                'created_at' => Carbon::createFromFormat('Y-m-d H:i:s', $snippet->created_at)->format('Y-m-d'),
+                'content' => $snippet->content,
+                'paid_item' => $snippet->paid_item,
+                'category' => $snippet->category()->first(),
+                'tags' => (object) $snippet->tags()->get(),
             ];
         }
-        
+
         return response()->json($snippets, 200);
     }
-    
-    
 }

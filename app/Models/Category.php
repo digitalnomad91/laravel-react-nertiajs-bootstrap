@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
@@ -18,17 +19,17 @@ class Category extends Model
     */
 
     protected $table = 'categories';
+
     protected $primaryKey = 'id';
+
     // public $timestamps = false;
     // protected $guarded = ['id'];
-    protected $fillable = ['name', 'slug', 'parent_id'];
+    protected $fillable = ['name', 'slug', 'parent_id', 'type'];
     // protected $hidden = [];
     // protected $dates = [];
 
     /**
      * Return the sluggable configuration array for this model.
-     *
-     * @return array
      */
     public function sluggable(): array
     {
@@ -66,6 +67,10 @@ class Category extends Model
         return $this->hasMany('\App\Models\Snippet');
     }
 
+    public function articles()
+    {
+        return $this->hasMany('\App\Models\Article');
+    }
     /*
     |--------------------------------------------------------------------------
     | SCOPES
@@ -74,7 +79,8 @@ class Category extends Model
 
     public function scopeFirstLevelItems($query)
     {
-        return $query->where('depth', '1')
+        return $query
+            ->where('depth', '1')
             ->orWhere('depth', null)
             ->orderBy('lft', 'ASC');
     }

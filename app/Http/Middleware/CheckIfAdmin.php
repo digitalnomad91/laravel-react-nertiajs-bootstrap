@@ -27,7 +27,7 @@ class CheckIfAdmin
      */
     private function checkIfUserIsAdmin($user)
     {
-        return ($user->is_admin == 1);
+        return $user->is_admin == 1;
     }
 
     /**
@@ -49,7 +49,6 @@ class CheckIfAdmin
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)

@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
+use Inertia\Inertia;
 
 class SnippetsController extends Controller
 {

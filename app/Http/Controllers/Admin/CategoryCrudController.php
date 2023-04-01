@@ -17,8 +17,8 @@ class CategoryCrudController extends CrudController
 
     public function setup()
     {
-        CRUD::setModel("\App\Models\Category");
-        CRUD::setRoute(config('backpack.base.route_prefix', 'admin').'/category');
+        CRUD::setModel('\App\Models\Category');
+        CRUD::setRoute(config('backpack.base.route_prefix', 'admin') . '/category');
         CRUD::setEntityNameStrings('category', 'categories');
     }
 
@@ -27,13 +27,26 @@ class CategoryCrudController extends CrudController
         CRUD::addColumn('name');
         CRUD::addColumn('slug');
         CRUD::addColumn('parent');
-        CRUD::addColumn([   // select_multiple: n-n relationship (with pivot table)
-            'label'     => 'Snippets', // Table column heading
-            'type'      => 'relationship_count',
-            'name'      => 'snippets', // the method that defines the relationship in your Model
-            'wrapper'   => [
+        CRUD::addColumn('type');
+        CRUD::addColumn([
+            // select_multiple: n-n relationship (with pivot table)
+            'label' => 'Snippets', // Table column heading
+            'type' => 'relationship_count',
+            'name' => 'snippets', // the method that defines the relationship in your Model
+            'wrapper' => [
                 'href' => function ($crud, $column, $entry, $related_key) {
-                    return backpack_url('snippet?category_id='.$entry->getKey());
+                    return backpack_url('snippet?category_id=' . $entry->getKey());
+                },
+            ],
+        ]);
+        CRUD::addColumn([
+            // select_multiple: n-n relationship (with pivot table)
+            'label' => 'Blog Posts', // Table column heading
+            'type' => 'relationship_count',
+            'name' => 'articles', // the method that defines the relationship in your Model
+            'wrapper' => [
+                'href' => function ($crud, $column, $entry, $related_key) {
+                    return backpack_url('article?id=' . $entry->getKey());
                 },
             ],
         ]);
@@ -68,6 +81,16 @@ class CategoryCrudController extends CrudController
             'name' => 'parent_id',
             'entity' => 'parent',
             'attribute' => 'name',
+        ]);
+        CRUD::addField([
+            // select_from_array
+            'name' => 'type',
+            'label' => 'Category Type',
+            'type' => 'select_from_array',
+            'options' => ['Code Snippets', 'Blog Posts'],
+            'allows_null' => true,
+            'default' => null,
+            // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
         ]);
     }
 

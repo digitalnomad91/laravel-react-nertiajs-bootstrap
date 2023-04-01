@@ -17,7 +17,7 @@ interface Props {
 export default function Login({ canResetPassword, status }: Props) {
     const route = useRoute()
     const form = useForm({
-        email: '',
+        identity: '',
         password: '',
         remember: '',
     })
@@ -36,17 +36,17 @@ export default function Login({ canResetPassword, status }: Props) {
             {status && <div className="mb-4 font-medium text-sm text-green-600 dark:text-green-400">{status}</div>}
             <form onSubmit={onSubmit}>
                 <div>
-                    <InputLabel htmlFor="email">Email</InputLabel>
+                    <InputLabel htmlFor="identity">Username or Email</InputLabel>
                     <TextInput
-                        id="email"
-                        type="email"
+                        id="identity"
+                        type="text"
                         className="mt-1 block w-full"
-                        value={form.data.email}
-                        onChange={e => form.setData('email', e.currentTarget.value)}
+                        value={form.data.identity}
+                        onChange={e => form.setData('identity', e.currentTarget.value)}
                         required
                         autoFocus
                     />
-                    <InputError className="mt-2" message={form.errors.email} />
+                    <InputError className="mt-2" message={form.errors.identity} />
                 </div>
 
                 <div className="mt-4">
@@ -114,8 +114,8 @@ export default function Login({ canResetPassword, status }: Props) {
                         >
                             <g fill="none">
                                 <path
-                                    fill-rule="evenodd"
-                                    clip-rule="evenodd"
+                                    fillRule="evenodd"
+                                    clipRule="evenodd"
                                     d="M12 0C5.372 0 0 5.373 0 12s5.372 12 12 12c6.627 0 12-5.373 12-12S18.627 0 12 0zm.14 19.018c-3.868 0-7-3.14-7-7.018c0-3.878 3.132-7.018 7-7.018c1.89 0 3.47.697 4.682 1.829l-1.974 1.978v-.004c-.735-.702-1.667-1.062-2.708-1.062c-2.31 0-4.187 1.956-4.187 4.273c0 2.315 1.877 4.277 4.187 4.277c2.096 0 3.522-1.202 3.816-2.852H12.14v-2.737h6.585c.088.47.135.96.135 1.474c0 4.01-2.677 6.86-6.72 6.86z"
                                     fill="white"
                                 />

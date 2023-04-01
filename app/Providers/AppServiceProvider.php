@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+//use ProtoneMedia\LaravelEloquentScopeAsSelect\ScopeAsSelect;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // ScopeAsSelect::addMacro();
+
+        // or use a custom method name:
+        //ScopeAsSelect::addMacro('withScopeAsSubQuery');
     }
 }

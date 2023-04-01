@@ -34,13 +34,14 @@ export default function AppLayout({ title, renderHeader, children, canLogin, can
             ;(await import('tw-elements')).default
         }
         use()
+
         const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon')
         const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon')
 
         // Change the icons inside the button based on previous settings
         if (
             localStorage.getItem('color-theme') === 'dark' ||
-            (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+            (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)
         ) {
             themeToggleLightIcon?.classList.remove('hidden')
         } else {
@@ -118,6 +119,12 @@ export default function AppLayout({ title, renderHeader, children, canLogin, can
                                 <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                     <NavLink href={route('home')} active={route().current('home')}>
                                         Code Snippets
+                                    </NavLink>
+                                    <NavLink href="/premium" active={route().current('premium')}>
+                                        Premium Members
+                                    </NavLink>
+                                    <NavLink href="/blog" active={route().current('blog.home')}>
+                                        Blog
                                     </NavLink>
 
                                     {page.props.auth.user?.is_admin ? (

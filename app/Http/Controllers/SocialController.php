@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use App\Models\User;
-use Validator;
-use Socialite;
-use Exception;
-use Auth;
 use App\Models\Team;
+use App\Models\User;
+use Auth;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Str;
+use Socialite;
 
 class SocialController extends Controller
 {
@@ -28,15 +26,16 @@ class SocialController extends Controller
                 ->first();
 
             $parts = explode('@', $user->email);
-            $username = $parts[0] . rand(0, 9999);
+            $username = $parts[0].rand(0, 9999);
 
             if ($isUser) {
                 Auth::login($isUser);
                 $isUser->social_login_id = $user->id;
-                if (!$isUser->username) {
+                if (! $isUser->username) {
                     $isUser->username = $username;
                 }
                 $isUser->save();
+
                 return redirect('/user/profile');
             } else {
                 $createUser = User::create([
@@ -51,7 +50,7 @@ class SocialController extends Controller
 
                 $team = Team::create([
                     'user_id' => $createUser->id,
-                    'name' => $user->name . "'s Team",
+                    'name' => $user->name."'s Team",
                     'personal_team' => 1,
                 ]);
 
@@ -69,7 +68,7 @@ class SocialController extends Controller
         }
     }
 
-    function saveImage($url)
+    public function saveImage($url)
     {
         $params = [
             'http' => [
@@ -78,13 +77,14 @@ class SocialController extends Controller
         ];
         $ctx = stream_context_create($params);
         $fp = @fopen($url, 'rb', false, $ctx);
-        if (!$fp) {
+        if (! $fp) {
             return false;
         } // Problem with url
 
         $meta = stream_get_meta_data($fp);
         if ($meta === false) {
             fclose($fp);
+
             return false; // Problem reading data from url
         }
 
@@ -98,8 +98,8 @@ class SocialController extends Controller
                         $content_type = $match[1];
 
                         $fullPath = '/var/www/kyba/storage/app/public/';
-                        $relativePath = 'profile-photos/' . Str::random(30) . '.' . $this->mime2ext($content_type);
-                        $outPath = $fullPath . $relativePath;
+                        $relativePath = 'profile-photos/'.Str::random(30).'.'.$this->mime2ext($content_type);
+                        $outPath = $fullPath.$relativePath;
                         /* Download image and save to local $outPath */
                         $in = fopen($url, 'rb');
                         $out = fopen($outPath, 'wb');
@@ -110,6 +110,7 @@ class SocialController extends Controller
                         fclose($out);
 
                         fclose($fp);
+
                         return $relativePath;
                     }
                 }
@@ -117,10 +118,11 @@ class SocialController extends Controller
         }
 
         fclose($fp);
+
         return false;
     }
 
-    function mime2ext($mime)
+    public function mime2ext($mime)
     {
         $mime_map = [
             'video/3gpp2' => '3g2',

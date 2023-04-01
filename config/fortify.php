@@ -4,7 +4,6 @@ use App\Providers\RouteServiceProvider;
 use Laravel\Fortify\Features;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Fortify Guard
@@ -46,9 +45,9 @@ return [
     |
     */
 
-    'username' => 'email',
+    'username' => 'identity',
 
-    'email' => 'email',
+    'email' => 'identity',
 
     /*
     |--------------------------------------------------------------------------
@@ -143,5 +142,4 @@ return [
             // 'window' => 0,
         ]),
     ],
-
 ];
