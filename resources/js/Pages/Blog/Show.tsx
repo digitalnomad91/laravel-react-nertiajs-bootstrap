@@ -104,7 +104,7 @@ export default function BlogShow() {
                                 <li>
                                     <a
                                         title="Next »"
-                                        href="https://tailwindcomponents.com/blog?page=2"
+                                        href="/blog?page=2"
                                         rel="next"
                                         className="flex items-center px-5 py-2.5 hover:bg-gray-700 space-x-3 text-sm font-medium text-white transition-colors duration-300 transform bg-gray-900 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md focus:outline-none"
                                     >
