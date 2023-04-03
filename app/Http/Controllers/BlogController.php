@@ -14,7 +14,7 @@ class BlogController extends Controller
             ->with('author')
             ->paginate(10)
             ->appends(Request::all());
-        return Inertia::render('Blog', [
+        return Inertia::render('Blog/Index', [
             'results' => $results,
             'categories' => \App\Models\Category::all(),
             'top_articles' => \App\Models\Article::with('category')->paginate(10),
