@@ -23,3 +23,5 @@ yarn-error.log
 rr
 .rr.yaml
 /database/snapshots
+/resources/views/vendor
+/resources/lang/vendor
