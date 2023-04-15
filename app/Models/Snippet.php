@@ -84,9 +84,9 @@ class Snippet extends Model
     {
         $query
             ->when($filters['search'] ?? null, function ($query, $search) {
-                $query->whereOr('title', 'like', '%' . $search . '%');
-                $query->whereOr('description', 'like', '%' . $search . '%');
-                $query->whereOr('content', 'like', '%' . $search . '%');
+                $query->orWhere('title', 'like', '%' . $search . '%');
+                $query->orWhere('description', 'like', '%' . $search . '%');
+                $query->orWhere('content', 'like', '%' . $search . '%');
             })
             ->when($filters['category'] ?? null, function ($query, $category) {
                 $query->where('category_id', $category);
