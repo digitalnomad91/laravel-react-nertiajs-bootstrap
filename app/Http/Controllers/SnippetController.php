@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
-class SnippetsController extends Controller
+class SnippetController extends Controller
 {
     public function index(Request $request)
     {
