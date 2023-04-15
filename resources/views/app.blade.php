@@ -15,7 +15,12 @@
         object-src 'none';
      "
     />
-    
+
+        {{-- Google Fonts --}}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        
     <style>
     /*
     module.exports = {
@@ -152,16 +157,13 @@ dl, dt, dd, ol, ul, li, fieldset, form, label, legend, article, main, nav, ins {
     }
     </style>
 
-    <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/index.min.css" />
     <!-- Scripts -->
     @routes
     @viteReactRefresh
     @vite('resources/js/app.tsx')
     @inertiaHead
   </head>
-  <body class="font-sans antialiased">
+  <body class="font-ubuntu antialiased">
     @inertia
   </body>
   <script>
