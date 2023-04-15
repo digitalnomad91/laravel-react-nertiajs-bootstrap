@@ -8,14 +8,16 @@ module.exports = {
         './vendor/laravel/jetstream/**/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
-        './resources/js/**/*.tsx',
+        './resources/js/**/*.{js,ts,jsx,tsx}',
         "./node_modules/tw-elements/dist/js/**/*.js"
     ],
 
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Proxima Nova', ...defaultTheme.fontFamily.sans],
+                poppins: ['Poppins', 'sans-serif'],
+                ubuntu: 'Ubuntu'
             },
         },
     },
