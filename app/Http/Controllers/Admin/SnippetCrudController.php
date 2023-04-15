@@ -61,7 +61,7 @@ class SnippetCrudController extends CrudController
                 // also optional
                 'options' => function ($query) {
                     return $query
-                        ->where('type', 'Code Snippet')
+                        ->where('type', 'Snippet')
                         ->orderBy('name', 'ASC')
                         ->get();
                 }, // force the related options to be a custom query, instead of all(); you can use this to filter the results show in the select
@@ -119,7 +119,7 @@ class SnippetCrudController extends CrudController
                 // also optional
                 'options' => function ($query) {
                     return $query
-                        ->where('type', 'Code Snippet')
+                        ->where('type', 'Snippet')
                         ->orderBy('name', 'ASC')
                         ->get();
                 }, // force the related options to be a custom query, instead of all(); you can use this to filter the results show in the select
