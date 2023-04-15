@@ -27,6 +27,7 @@ class BlogController extends Controller
             ->with('author')
             ->where('slug', $slug)
             ->first();
+
         return Inertia::render('Blog/Show', [
             'post' => $post,
             'categories' => \App\Models\Category::all(),
