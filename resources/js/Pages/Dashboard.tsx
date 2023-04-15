@@ -70,7 +70,7 @@ export default function Dashboard() {
     return (
         <AppLayout
             title="Code Snippets"
-            renderHeader={() => <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Code Snippets</h2>}
+            renderHeader={() => <h2 className="text-xl text-gray-800 dark:text-gray-200 leading-tight">Code Snippets</h2>}
         >
             <div className="py-4">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -85,17 +85,19 @@ export default function Dashboard() {
                                 >
                                     <div className="py-8 flex flex-wrap md:flex-nowrap w-full">
                                         <div className="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-                                            <span className="font-semibold title-font dark:text-white">{todoItem.category.name}</span>
+                                            <span className="font-semibold title-font dark:text-white">
+                                                <Link href={'/?category=' + todoItem.category.id}>{todoItem.category.name}</Link>
+                                            </span>
                                             <span className="mt-1 text-gray-500 text-sm hidden">12 Jun 2019</span>
                                         </div>
                                         <div className="md:flex-grow w-full">
-                                            <h2 className="text-2xl font-medium dark:text-white title-font mb-2">
+                                            <h2 className="text-2xl  dark:text-white title-font mb-2">
                                                 (<Link href={'/snippet/' + todoItem.slug}>{todoItem.title}</Link>)
                                             </h2>
 
                                             {todoItem.paid_item == true && (
                                                 <Link
-                                                    className="my-2 block rounded bg-neutral-100 px-7 pt-4 pb-3.5 text-xs font-medium uppercase leading-tight text-neutral-500 data-[te-nav-active]:!bg-primary-100 data-[te-nav-active]:text-primary-700 bg-neutral-700 text-white data-[te-nav-active]:text-primary-700 md:mr-4 w-36"
+                                                    className="my-2 block rounded bg-neutral-100 px-7 pt-4 pb-3.5 text-xs uppercase leading-tight text-neutral-500 data-[te-nav-active]:!bg-primary-100 data-[te-nav-active]:text-primary-700 bg-neutral-700 text-white data-[te-nav-active]:text-primary-700 md:mr-4 w-36"
                                                     href="/payment"
                                                 >
                                                     Subcribe Now
