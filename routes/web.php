@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\SnippetsController;
+use App\Http\Controllers\SnippetController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\TwoFactorAuthController;
 
@@ -25,10 +25,12 @@ use Inertia\Inertia;
 | CODE SNIPPET ROUTES
 |--------------------------------------------------------------------------
 */
-Route::controller(SnippetsController::class)->group(function () {
-    Route::get('/', 'index')->name('home');
-    Route::get('/snippet/{slug}', 'view')->name('snippet.view');
-});
+Route::controller(SnippetController::class)
+    ->name('snippet.')
+    ->group(function () {
+        Route::get('/', 'index')->name('home');
+        Route::get('/snippet/{slug}', 'view')->name('view');
+    });
 //Route::get('/snippets', 'App\Http\Controllers\Admin\SnippetCrudController@getSnippets')->name('request_snippets');
 
 /*
@@ -36,10 +38,12 @@ Route::controller(SnippetsController::class)->group(function () {
 | BLOG ROUTES
 |--------------------------------------------------------------------------
 */
-Route::controller(BlogController::class)->group(function () {
-    Route::get('/blog', 'index')->name('blog.home');
-    Route::get('/blog/{category}/{slug}', 'view')->name('blog.view');
-});
+Route::controller(BlogController::class)
+    ->name('blog.')
+    ->group(function () {
+        Route::get('/blog', 'index')->name('home');
+        Route::get('/blog/{category}/{slug}', 'view')->name('view');
+    });
 
 /*
 |--------------------------------------------------------------------------
@@ -74,7 +78,7 @@ Route::get('/admin/login', function () {
 });
 
 //Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-//    Route::get('/dashboard', 'App\Http\Controllers\SnippetsController@index')->name('dashboard');
+//    Route::get('/dashboard', 'App\Http\Controllers\SnippetController@index')->name('dashboard');
 //});
 Route::get('/dashboard', function () {
     return redirect('/');
