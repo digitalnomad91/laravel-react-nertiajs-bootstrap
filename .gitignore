@@ -4,6 +4,7 @@
 /public/build
 /public/hot
 /public/storage
+/public/vendor
 /public/packages
 /storage/*.key
 /vendor

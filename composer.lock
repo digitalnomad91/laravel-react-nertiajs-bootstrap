@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0b23786073463d424439e11b2687dc6",
+    "content-hash": "f37e99e161079e350a4bf028f030a2a1",
     "packages": [
         {
             "name": "alek13/slack",
@@ -625,6 +625,76 @@
                 "source": "https://github.com/Laravel-Backpack/PermissionManager/tree/6.0.16"
             },
             "time": "2023-02-20T15:40:44+00:00"
+        },
+        {
+            "name": "backpack/revise-operation",
+            "version": "1.0.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Laravel-Backpack/revise-operation.git",
+                "reference": "8958794984086b9081087939d02b826fe880751d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Laravel-Backpack/revise-operation/zipball/8958794984086b9081087939d02b826fe880751d",
+                "reference": "8958794984086b9081087939d02b826fe880751d",
+                "shasum": ""
+            },
+            "require": {
+                "backpack/crud": "^4.0|^5.0",
+                "venturecraft/revisionable": "1.*"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.1",
+                "orchestra/testbench": "~3|~4",
+                "phpunit/phpunit": "^8.0",
+                "sempro/phpunit-pretty-print": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Backpack\\ReviseOperation\\ReviseOperationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Backpack\\ReviseOperation\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cristian Tabacitu",
+                    "email": "tabacitu@backpackforlaravel.com",
+                    "homepage": "https://backpackforlaravel.com"
+                }
+            ],
+            "description": "Backpack interface for venturecraft/revisionable",
+            "homepage": "https://github.com/laravel-backpack/revise-operation",
+            "keywords": [
+                "Admin Interface",
+                "Audit Log",
+                "Backpack Add-On",
+                "Backpack Operation",
+                "Backpack for Laravel",
+                "ReviseOperation",
+                "Revision History",
+                "Revisions",
+                "admin panel",
+                "backpack",
+                "laravel",
+                "revisionable"
+            ],
+            "support": {
+                "issues": "https://github.com/Laravel-Backpack/revise-operation/issues",
+                "source": "https://github.com/Laravel-Backpack/revise-operation/tree/1.0.12"
+            },
+            "time": "2023-02-12T09:09:37+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -7357,6 +7427,76 @@
             "time": "2021-06-28T04:27:21+00:00"
         },
         {
+            "name": "league/uri-parser",
+            "version": "1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/uri-parser.git",
+                "reference": "671548427e4c932352d9b9279fdfa345bf63fa00"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/uri-parser/zipball/671548427e4c932352d9b9279fdfa345bf63fa00",
+                "reference": "671548427e4c932352d9b9279fdfa345bf63fa00",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "phpstan/phpstan": "^0.9.2",
+                "phpstan/phpstan-phpunit": "^0.9.4",
+                "phpstan/phpstan-strict-rules": "^0.9.0",
+                "phpunit/phpunit": "^6.0"
+            },
+            "suggest": {
+                "ext-intl": "Allow parsing RFC3987 compliant hosts",
+                "league/uri-schemes": "Allow validating and normalizing URI parsing results"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/functions_include.php"
+                ],
+                "psr-4": {
+                    "League\\Uri\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ignace Nyamagana Butera",
+                    "email": "nyamsprod@gmail.com",
+                    "homepage": "https://nyamsprod.com"
+                }
+            ],
+            "description": "userland URI parser RFC 3986 compliant",
+            "homepage": "https://github.com/thephpleague/uri-parser",
+            "keywords": [
+                "parse_url",
+                "parser",
+                "rfc3986",
+                "rfc3987",
+                "uri",
+                "url"
+            ],
+            "support": {
+                "issues": "https://github.com/thephpleague/uri-parser/issues",
+                "source": "https://github.com/thephpleague/uri-parser/tree/master"
+            },
+            "abandoned": true,
+            "time": "2018-11-22T07:55:51+00:00"
+        },
+        {
             "name": "livewire/livewire",
             "version": "v2.12.3",
             "source": {
@@ -10799,6 +10939,74 @@
                 "source": "https://github.com/pusher/pusher-http-php/tree/7.2.2"
             },
             "time": "2022-12-20T19:52:36+00:00"
+        },
+        {
+            "name": "pyaesoneaung/to-raw-sql",
+            "version": "v1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PyaeSoneAungRgn/to-raw-sql.git",
+                "reference": "fd0341dd98494967401fa47762631b689df04414"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PyaeSoneAungRgn/to-raw-sql/zipball/fd0341dd98494967401fa47762631b689df04414",
+                "reference": "fd0341dd98494967401fa47762631b689df04414",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^9.0|^10.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.14.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "nunomaduro/collision": "^6.0",
+                "nunomaduro/larastan": "^2.0.1",
+                "orchestra/testbench": "^7.0|^8.0",
+                "pestphp/pest": "^1.21",
+                "pestphp/pest-plugin-laravel": "^1.1",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "PyaeSoneAung\\ToRawSql\\ToRawSqlServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PyaeSoneAung\\ToRawSql\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pyae Sone Aung",
+                    "email": "pyaesoneaungrgn@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Get raw SQL from Laravel Query Builder",
+            "homepage": "https://github.com/PyaeSoneAungRgn/to-raw-sql",
+            "keywords": [
+                "laravel",
+                "pyaesoneaung",
+                "to-raw-sql"
+            ],
+            "support": {
+                "issues": "https://github.com/PyaeSoneAungRgn/to-raw-sql/issues",
+                "source": "https://github.com/PyaeSoneAungRgn/to-raw-sql/tree/v1.1.2"
+            },
+            "time": "2023-03-05T02:51:50+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -20693,6 +20901,55 @@
             "time": "2023-02-16T09:57:23+00:00"
         },
         {
+            "name": "tgalopin/html-sanitizer",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tgalopin/html-sanitizer.git",
+                "reference": "5d02dcb6f2ea4f505731eac440798caa1b3b0913"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tgalopin/html-sanitizer/zipball/5d02dcb6f2ea4f505731eac440798caa1b3b0913",
+                "reference": "5d02dcb6f2ea4f505731eac440798caa1b3b0913",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "league/uri-parser": "^1.4.1",
+                "masterminds/html5": "^2.4",
+                "php": ">=7.1",
+                "psr/log": "^1.0|^2.0|^3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.4",
+                "symfony/var-dumper": "^4.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HtmlSanitizer\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Titouan Galopin",
+                    "email": "galopintitouan@gmail.com"
+                }
+            ],
+            "description": "Sanitize untrustworthy HTML user input",
+            "support": {
+                "issues": "https://github.com/tgalopin/html-sanitizer/issues",
+                "source": "https://github.com/tgalopin/html-sanitizer/tree/1.5.0"
+            },
+            "abandoned": "symfony/html-sanitizer",
+            "time": "2021-09-14T08:27:50+00:00"
+        },
+        {
             "name": "tightenco/ziggy",
             "version": "v1.5.0",
             "source": {
@@ -20974,6 +21231,87 @@
                 "source": "https://github.com/Torann/laravel-geoip/tree/3.0.5"
             },
             "time": "2023-02-21T14:02:27+00:00"
+        },
+        {
+            "name": "twigger/laravel-job-status",
+            "version": "v1.3.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tobytwigger/laravel-job-status.git",
+                "reference": "708784770052e067e56ddbb3f13863d694f76769"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tobytwigger/laravel-job-status/zipball/708784770052e067e56ddbb3f13863d694f76769",
+                "reference": "708784770052e067e56ddbb3f13863d694f76769",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^3.5",
+                "laravel/framework": "^8.0|^9.0|^10.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "brianium/paratest": "^6.3",
+                "friendsofphp/php-cs-fixer": "^3.10",
+                "laravel/serializable-closure": "^1.2",
+                "orchestra/testbench": "^6.2|^7.0",
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpstan/phpstan": "^1.8",
+                "phpunit/phpunit": "^9.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "JobStatus\\JobStatusServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "JobStatus\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Toby Twigger",
+                    "email": "tobytwigger1@gmail.com",
+                    "homepage": "https://github.com/tobytwigger"
+                }
+            ],
+            "description": "Job status for Laravel",
+            "homepage": "https://github.com/tobytwigger/laravel-job-status",
+            "keywords": [
+                "cancel",
+                "config",
+                "job",
+                "laravel",
+                "progress",
+                "queue",
+                "track",
+                "vue"
+            ],
+            "support": {
+                "docs": "https://tobytwigger.github.io/laravel-job-status/",
+                "email": "tobytwigger1@gmail.com",
+                "issues": "https://github.com/tobytwigger/laravel-job-status/issues",
+                "source": "https://github.com/tobytwigger/laravel-job-status/tree/v1.3.6"
+            },
+            "funding": [
+                {
+                    "url": "https://www.buymeacoffee.com/settings",
+                    "type": "buymeacoffee"
+                }
+            ],
+            "time": "2023-03-24T14:15:33+00:00"
         },
         {
             "name": "venturecraft/revisionable",
@@ -25339,7 +25677,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
