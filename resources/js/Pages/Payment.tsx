@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { router } from '@inertiajs/react'
 import * as te from 'tw-elements'
+import { SnackbarProvider, enqueueSnackbar } from 'notistack'
 
 export default function Payment() {
     const [error, setError] = useState<string | boolean>('')
@@ -77,16 +78,37 @@ export default function Payment() {
             })
 
             if (payload.error) {
+                enqueueSnackbar(`Payment failed: ${payload.error.message}`, {
+                    variant: 'error',
+                    anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    },
+                })
                 setError(`Payment failed: ${payload.error.message}`)
                 setProcessing(false)
             } else {
                 const paymentConfirmation = await postConfirmPayment(selectedPlan, payload.paymentIntent.id)
                 if (paymentConfirmation?.error) {
+                    enqueueSnackbar(`Payment failed: $${paymentConfirmation?.error}`, {
+                        variant: 'error',
+                        anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        },
+                    })
                     setError(`Payment failed: ${paymentConfirmation?.error}`)
                     setProcessing(false)
                 } else {
                     setError(false)
                     setSucceeded(true)
+                    enqueueSnackbar(`Payment Successful!`, {
+                        variant: 'success',
+                        anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        },
+                    })
                     //setProcessing(false)
 
                     //wait 100ms for modal to close then re-route to home page
@@ -104,12 +126,14 @@ export default function Payment() {
     return (
         <AppLayout
             title="Stripe Payment"
-            renderHeader={() => <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Payment</h2>}
+            renderHeader={() => (
+                <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Premium Membership</h2>
+            )}
         >
-            <div className="py-12">
+            <div className="py-6">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <link rel="stylesheet" href="https://cdn.tailgrids.com/tailgrids-fallback.css" />
-
+                    <SnackbarProvider />
                     <section className="pb-12 lg:pb-[90px] relative z-20 overflow-hidden">
                         <div className="bg-white dark:bg-gray-900">
                             <div className="container px-6 py-8 mx-auto">
@@ -127,27 +151,25 @@ export default function Payment() {
                                         onClick={() => handlePlanChange('quarterly')}
                                     >
                                         <div className="flex items-center">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="w-5 h-5 text-blue-600 sm:h-9 sm:w-9"
-                                                viewBox="0 0 20 20"
-                                                fillRule="currentColor"
-                                            >
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px">
                                                 <path
-                                                    fillRule="evenodd"
-                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                    clipRule="evenodd"
+                                                    fill="#c8e6c9"
+                                                    d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
+                                                />
+                                                <path
+                                                    fill="#4caf50"
+                                                    d="M34.586,14.586l-13.57,13.586l-5.602-5.586l-2.828,2.828l8.434,8.414l16.395-16.414L34.586,14.586z"
                                                 />
                                             </svg>
 
                                             <div className="flex flex-col items-center mx-5 space-y-1">
-                                                <h2 className="text-lg font-medium text-gray-700 sm:text-2xl dark:text-gray-200">
-                                                    3 Months (Quarterly) - $10 <span className="text-base font-medium">/Month</span>
+                                                <h2 className="text-lg text-gray-700 sm:text-2xl dark:text-gray-200">
+                                                    3 Months (Quarterly) - $10 <span className="text-base ">/ Month</span>
                                                 </h2>
                                             </div>
                                         </div>
 
-                                        <h2 className="text-2xl font-semibold text-gray-300 sm:text-4xl">$29.99</h2>
+                                        <h2 className="text-2xl text-gray-300 sm:text-4xl">$29.99</h2>
                                     </div>
 
                                     <div
@@ -159,20 +181,57 @@ export default function Payment() {
                                         <div className="flex items-center">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
-                                                className="w-5 h-5 text-gray-400 sm:h-9 sm:w-9"
-                                                viewBox="0 0 20 20"
-                                                fillRule="currentColor"
+                                                viewBox="0,0,256,256"
+                                                width="48px"
+                                                height="48px"
+                                                fill-rule="nonzero"
                                             >
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                    clipRule="evenodd"
-                                                />
+                                                <g
+                                                    fill="#dddddd"
+                                                    fill-rule="nonzero"
+                                                    stroke="none"
+                                                    stroke-width="1"
+                                                    stroke-linecap="butt"
+                                                    stroke-linejoin="miter"
+                                                    stroke-miterlimit="10"
+                                                    stroke-dasharray=""
+                                                    stroke-dashoffset="0"
+                                                    font-family="none"
+                                                    font-weight="none"
+                                                    font-size="none"
+                                                    text-anchor="none"
+                                                ></g>
+                                                <g
+                                                    fill="none"
+                                                    fill-rule="nonzero"
+                                                    stroke="none"
+                                                    stroke-width="1"
+                                                    stroke-linecap="butt"
+                                                    stroke-linejoin="miter"
+                                                    stroke-miterlimit="10"
+                                                    stroke-dasharray=""
+                                                    stroke-dashoffset="0"
+                                                    font-family="none"
+                                                    font-weight="none"
+                                                    font-size="none"
+                                                    text-anchor="none"
+                                                >
+                                                    <g transform="scale(5.33333,5.33333)">
+                                                        <path
+                                                            d="M44,24c0,11.045 -8.955,20 -20,20c-11.045,0 -20,-8.955 -20,-20c0,-11.045 8.955,-20 20,-20c11.045,0 20,8.955 20,20z"
+                                                            fill="#5c7cfa"
+                                                        ></path>
+                                                        <path
+                                                            d="M34.586,14.586l-13.57,13.586l-5.602,-5.586l-2.828,2.828l8.434,8.414l16.395,-16.414z"
+                                                            fill="#94d82d"
+                                                        ></path>
+                                                    </g>
+                                                </g>
                                             </svg>
 
                                             <div className="flex flex-col mx-5 space-y-1">
-                                                <h2 className="text-lg font-medium text-gray-700 sm:text-2xl dark:text-gray-200">
-                                                    1 Year (Annual) - $7.50 <span className="text-base font-medium">/Month</span>
+                                                <h2 className="text-lg text-gray-700 sm:text-2xl dark:text-gray-200">
+                                                    1 Year (Annual) - $7.50 <span className="text-base">/ Month</span>
                                                 </h2>
                                                 <div className="px-2 text-xs text-blue-500 bg-gray-100 rounded-full sm:px-4 sm:py-1 dark:bg-gray-700 w-24 text-center">
                                                     Save 25%
@@ -180,7 +239,7 @@ export default function Payment() {
                                             </div>
                                         </div>
 
-                                        <h2 className="text-2xl font-semibold text-blue-600 sm:text-4xl">$89.99</h2>
+                                        <h2 className="text-2xl text-blue-600 sm:text-4xl">$89.99</h2>
                                     </div>
 
                                     <div className="flex justify-center">
