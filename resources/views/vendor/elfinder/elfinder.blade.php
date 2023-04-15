@@ -1,9 +1,25 @@
-@extends('backpack::layouts.top_left')
+<!DOCTYPE html>
+<html lang="{{ app()->getLocale() }}">
+    <head>
+        <meta charset="utf-8">
+        <title>elFinder 2.0</title>
 
+        <!-- jQuery and jQuery UI (REQUIRED) -->
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 
-@section('after_scripts')
-        @include('vendor.elfinder.common_scripts')
-        @include('vendor.elfinder.common_styles')
+        <!-- elFinder CSS (REQUIRED) -->
+        <link rel="stylesheet" type="text/css" href="{{ asset($dir.'/css/elfinder.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset($dir.'/css/theme.css') }}">
+
+        <!-- elFinder JS (REQUIRED) -->
+        <script src="{{ asset($dir.'/js/elfinder.min.js') }}"></script>
+
+        @if($locale)
+            <!-- elFinder translation (OPTIONAL) -->
+            <script src="{{ asset($dir."/js/i18n/elfinder.$locale.js") }}"></script>
+        @endif
 
         <!-- elFinder initialization (REQUIRED) -->
         <script type="text/javascript" charset="utf-8">
@@ -23,24 +39,11 @@
                 });
             });
         </script>
-@endsection
-
-@php
-  $breadcrumbs = [
-    trans('backpack::crud.admin') => url(config('backpack.base.route_prefix'), 'dashboard'),
-    trans('backpack::crud.file_manager') => false,
-  ];
-@endphp
-
-@section('header')
-    <section class="container-fluid">
-      <h2>{{ trans('backpack::crud.file_manager') }}</h2>
-    </section>
-@endsection
-
-@section('content')
+    </head>
+    <body>
 
         <!-- Element where elFinder will be created (REQUIRED) -->
         <div id="elfinder"></div>
 
-@endsection
+    </body>
+</html>
