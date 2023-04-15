@@ -9,6 +9,7 @@ import { Link, usePage } from '@inertiajs/react'
 import MonacoEditor from '@uiw/react-monacoeditor'
 import Pagination from '@/Components/Pagination'
 import useTypedPage from '@/Hooks/useTypedPage'
+import SanitizeHTML from '@/Components/SanitizeHTML'
 
 export default function BlogShow() {
     const page = useTypedPage()
@@ -42,16 +43,22 @@ export default function BlogShow() {
             arrowSize: 30,
         },
     }
+    const defaultOptions = {
+        allowedTags: ['b', 'i', 'em', 'strong', 'a', 'h1'],
+        allowedAttributes: {
+            a: ['href'],
+        },
+        allowedIframeHostnames: ['www.youtube.com'],
+    }
 
     return (
         <AppLayout
             title={`${post.title}`}
-            renderHeader={() => <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{post.title}</h2>}
+            renderHeader={() => <h2 className="text-xl text-gray-800 dark:text-gray-200 leading-tight">{post.title}</h2>}
         >
-            <div className="max-w-2xl px-6 py-6 mx-auto xl:py-12 lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl">
-                <p className="text-lg font-bold text-gray-800 dark:text-gray-200"> {post.title} </p>
-                <div className="mt-8 lg:flex lg:gap-x-28 xl:gap-x-32">
-                    <div className="lg:w-3/5">
+            <div className="max-w-2xl px-6 py-2 mx-auto lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl">
+                <div className="mt-8 lg:flex lg:gap-x-12 xl:gap-x-24">
+                    <div className="lg:w-5/6">
                         <div className="space-y-12">
                             <div>
                                 <a href={`/blog/${post.category.slug}/${post.slug}`}>
@@ -61,13 +68,13 @@ export default function BlogShow() {
                                         className="object-cover w-full h-56 mb-6 duration-200 rounded-lg shadow-md hover:scale-105 sm:h-80 2xl:h-96"
                                     />
                                 </a>
-                                <a
-                                    href="/blog/tailwind-css/9-beautiful-hero-sections-for-your-tailwind-css-project"
-                                    className="inline-block text-xl font-bold text-gray-800 capitalize dark:text-gray-200 sm:text-2xl hover:underline hover:text-blue-500"
-                                >
+                                <h1 className="inline-block mt-0 text-4xl font-medium leading-tight font-bold text-gray-800 capitalize dark:text-gray-200 hover:underline hover:text-blue-500">
                                     {post.title}
-                                </a>
-                                <p className="mt-4 text-gray-500 dark:text-gray-400">{post.content}</p>
+                                </h1>
+                                <article className="prose lg:prose-lg max-w-none dark:prose-invert mt-4 text-gray-500 dark:text-gray-400">
+                                    <SanitizeHTML html={post.content} options={defaultOptions} />
+                                </article>
+
                                 <div className="mt-6 sm:flex sm:items-center sm:justify-between sm:gap-x-12 hidden">
                                     <div className="flex items-center space-x-3">
                                         <img src={`/storage/${post.image}`} alt="" className="object-cover w-10 h-10 rounded-full" />
@@ -106,7 +113,7 @@ export default function BlogShow() {
                                         title="Next »"
                                         href="/blog?page=2"
                                         rel="next"
-                                        className="flex items-center px-5 py-2.5 hover:bg-gray-700 space-x-3 text-sm font-medium text-white transition-colors duration-300 transform bg-gray-900 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md focus:outline-none"
+                                        className="hidden flex items-center px-5 py-2.5 hover:bg-gray-700 space-x-3 text-sm font-medium text-white transition-colors duration-300 transform bg-gray-900 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md focus:outline-none"
                                     >
                                         {' '}
                                         Read More »{' '}
@@ -117,9 +124,9 @@ export default function BlogShow() {
                     </div>
                     <div className="hidden lg:w-1/4 lg:block">
                         <div>
-                            <h3 className="font-medium text-gray-500 dark:text-gray-400">Categories</h3>
+                            <h3 className="font-bold text-gray-500 dark:text-gray-400">Categories</h3>
                             <div className="flex flex-col mt-2 space-y-1">
-                                <a href="/blog" className="font-medium text-gray-800 capitalize dark:text-white hover:underline">
+                                <a href="/blog" className="text-gray-800 capitalize dark:text-white hover:underline">
                                     All Articles
                                 </a>
                                 {categories?.map((category, index) => {
@@ -129,7 +136,7 @@ export default function BlogShow() {
                                         <a
                                             key={index}
                                             href={`/blog/${category.slug}`}
-                                            className="font-medium text-gray-800 capitalize dark:text-white hover:underline"
+                                            className="text-gray-800 capitalize dark:text-white hover:underline"
                                         >
                                             {category.name}
                                         </a>
@@ -138,7 +145,7 @@ export default function BlogShow() {
                             </div>
                         </div>
                         <div className="mt-12">
-                            <h3 className="font-medium text-gray-500 dark:text-gray-400">Top Articles</h3>
+                            <h3 className="font-bold text-gray-500 dark:text-gray-400">Top Articles</h3>
                             <div className="flex flex-col mt-2 space-y-3">
                                 {top_articles?.data?.map((article, index) => {
                                     var color = colors[(Math.random() * colors.length - 1) | 0]
@@ -147,7 +154,7 @@ export default function BlogShow() {
                                         <a
                                             key={index}
                                             href={`/blog/${article.slug}`}
-                                            className="font-medium text-gray-800 capitalize dark:text-white hover:underline"
+                                            className="text-gray-800 capitalize dark:text-white hover:underline"
                                         >
                                             {article.title}
                                         </a>
